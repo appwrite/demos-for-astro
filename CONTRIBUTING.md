@@ -1,0 +1,1 @@
+Please see our main [CONTRIBUTING](https://github.com/appwrite/appwrite/blob/master/CONTRIBUTING.md) file for how to include contributions.
