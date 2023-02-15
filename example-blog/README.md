@@ -1,4 +1,26 @@
-# Astro Starter Kit: Blog
+# Astro Starter Kit: Blog with Appwrite
+
+You will find a working example [here](https://demos-for-astro-example-blog.vercel.app/)
+
+## Appwrite
+
+Once you either install Appwrite or use the cloud version, you will find all of the environment variables that you will need in order to build the blog database.
+
+For simple setup you can run the following commands while in this directory.
+
+Create the project
+```
+appwrite deploy project
+```
+
+Create the database and collection
+```
+appwrite deploy collection
+```
+
+Now copy the `.env.template` to `.env` and fill in all of the environment variables.
+
+## Astro
 
 ```
 npm create astro@latest -- --template blog
