@@ -1,16 +1,16 @@
 {
-    "projectId": "astro-example-blog",
-    "projectName": "astro-example-blog",
+    "projectId": "6062f9c2c09ce",
+    "projectName": "Appwrite Demos",
     "collections": [
         {
-            "$id": "astro-example-blog-posts",
+            "$id": "63ecf94aad01784f9c65",
             "$createdAt": "2023-02-09T21:18:51.484+00:00",
             "$updatedAt": "2023-02-10T16:37:38.702+00:00",
             "$permissions": [
                 "read(\"any\")"
             ],
-            "databaseId": "astro-example-blog-db",
-            "name": "astro-example-blog-posts",
+            "databaseId": "default",
+            "name": "Astro Example Blog",
             "enabled": true,
             "documentSecurity": false,
             "attributes": [
