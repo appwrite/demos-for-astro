@@ -1,0 +1,19 @@
+{
+	"name": "example-blog",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "astro dev",
+		"start": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"@astrojs/mdx": "^0.16.0",
+		"@astrojs/rss": "^2.1.0",
+		"@astrojs/sitemap": "^1.0.1",
+		"appwrite": "^10.2.0",
+		"astro": "^2.0.9"
+	}
+}

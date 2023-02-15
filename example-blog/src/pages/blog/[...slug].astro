@@ -1,0 +1,31 @@
+---
+import BlogPost from "../../layouts/BlogPost.astro";
+import {
+  appwriteDatabases,
+  BlogPost as BlogPostType,
+  BlogPostList,
+} from "../../lib/appwrite";
+
+export async function getStaticPaths() {
+  const entries = (await appwriteDatabases.listDocuments(
+    import.meta.env.APPWRITE_DB_ID,
+    import.meta.env.APPWRITE_COLLECTION_ID
+  )) as BlogPostList;
+
+  const posts = entries.documents.sort(
+    (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
+  );
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+type Props = BlogPostType;
+
+const post = Astro.props;
+---
+
+<BlogPost {...post.data}>
+  <h1>{post.title}</h1>
+  {post.content}
+</BlogPost>
