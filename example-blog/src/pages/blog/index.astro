@@ -1,8 +1,5 @@
 ---
-import BaseHead from "../../components/BaseHead.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+import SiteLayout from "../../layouts/SiteLayout.astro";
 import { appwriteDatabases, BlogPostList } from "../../lib/appwrite";
 
 const entries = (await appwriteDatabases.listDocuments(
@@ -15,50 +12,23 @@ const posts = entries.documents.sort(
 );
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-    <style>
-      ul {
-        list-style-type: none;
-        padding: unset;
+<SiteLayout>
+  <section>
+    <ul>
+      {
+        posts.map((post) => (
+          <li>
+            <time datetime={post.date}>
+              {new Date(post.date).toLocaleDateString("en-us", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </time>
+            <a href={`/blog/${post.slug}/`}>{post.title}</a>
+          </li>
+        ))
       }
-      ul li {
-        display: flex;
-      }
-      ul li time {
-        flex: 0 0 130px;
-        font-style: italic;
-        color: #595959;
-      }
-      ul li a:visited {
-        color: #8e32dc;
-      }
-    </style>
-  </head>
-  <body>
-    <Header />
-    <main>
-      <section>
-        <ul>
-          {
-            posts.map((post) => (
-              <li>
-                <time datetime={post.date}>
-                  {new Date(post.date).toLocaleDateString("en-us", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </time>
-                <a href={`/blog/${post.slug}/`}>{post.title}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-    </main>
-    <Footer />
-  </body>
-</html>
+    </ul>
+  </section>
+</SiteLayout>
