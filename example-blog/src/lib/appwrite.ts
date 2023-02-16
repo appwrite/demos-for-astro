@@ -30,11 +30,19 @@ appwriteAccount.getSession('current').then(function (response) {
     isLoggedIn.set(undefined)
 })
 
+export const user$: WritableAtom<undefined | Models.Account<Models.Preferences>> = atom(undefined);
+
+isLoggedIn.subscribe(async (session) => {
+    if (session?.userId) {
+        user$.set(await account());
+    }
+});
+
 export const login = async (email: string, password: string) => {
     try {
         const session = await appwriteAccount.createEmailSession(email, password);
-            isLoggedIn.set(session);
-            window.location.href = '/account';
+        isLoggedIn.set(session);
+        window.location.href = '/account';
     } catch (error) {
         const appwriteError = error as AppwriteException;
         alert(appwriteError.message)
@@ -44,8 +52,8 @@ export const login = async (email: string, password: string) => {
 export const logout = async () => {
     try {
         const session = isLoggedIn.get();
-        if(session?.$id){
-        await appwriteAccount.deleteSession(session?.$id);
+        if (session?.$id) {
+            await appwriteAccount.deleteSession(session?.$id);
             isLoggedIn.set(undefined);
             window.location.href = '/';
         }

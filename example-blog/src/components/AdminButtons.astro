@@ -1,0 +1,62 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+---
+
+<script>
+  // Check if user has session
+  import { user$ } from "../lib/appwrite";
+
+  const adminButtonsElem: HTMLElement | null =
+    document.querySelector("#adminButtons");
+
+  // Show Buttons if user is an admin
+  user$.subscribe((user) => {
+    if (!adminButtonsElem) return;
+    if (user && user.prefs.admin) {
+      adminButtonsElem.style.display = "block";
+    } else {
+      adminButtonsElem.style.display = "none";
+    }
+  });
+</script>
+<style>
+  button {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    cursor: pointer;
+  }
+</style>
+<section id="adminButtons" style="display: none">
+  <div style="display:flex; gap: 0.5rem">
+    <button
+      ><svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xml:space="preserve"
+        width="100%"
+        height="100%"
+        ><path
+          xmlns="http://www.w3.org/2000/svg"
+          d="M10 18a1 1 0 0 0 1-1v-6a1 1 0 0 0-2 0v6a1 1 0 0 0 1 1zM20 6h-4V5a3 3 0 0 0-3-3h-2a3 3 0 0 0-3 3v1H4a1 1 0 0 0 0 2h1v11a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8h1a1 1 0 0 0 0-2zM10 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1h-4zm7 14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V8h10zm-3-1a1 1 0 0 0 1-1v-6a1 1 0 0 0-2 0v6a1 1 0 0 0 1 1z"
+        ></path></svg
+      ></button
+    >
+    <button
+      ><svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xml:space="preserve"
+        width="100%"
+        height="100%"
+        ><path
+          xmlns="http://www.w3.org/2000/svg"
+          fill-rule="evenodd"
+          d="M14.802 6.445 8.696 12.55c-.405.358-.656.86-.696 1.318v2.135l2.064.002c.534-.038 1.031-.287 1.43-.743L17.558 9.2l-2.755-2.755zm1.415-1.414 2.754 2.755.894-.894a.462.462 0 0 0 0-.653L17.76 4.135a.456.456 0 0 0-.647 0l-.897.896zM22 13v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7v2H4v16h16v-7h2zM17.437 2c.655 0 1.283.261 1.741.723l2.101 2.101a2.462 2.462 0 0 1 0 3.482l-8.321 8.318c-.699.805-1.69 1.3-2.823 1.378H6v-1l.003-3.215c.085-1.054.576-2.035 1.323-2.694l8.37-8.368A2.456 2.456 0 0 1 17.436 2z"
+        ></path></svg
+      ></button
+    >
+  </div>
+</section>

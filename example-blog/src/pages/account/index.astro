@@ -3,25 +3,13 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 ---
 
 <script>
-  import { isLoggedIn, logout, account } from "../../lib/appwrite";
-  import { atom, WritableAtom } from "nanostores";
-  import type { Models } from "appwrite";
-
-  export const user: WritableAtom<
-    undefined | Models.Account<Models.Preferences>
-  > = atom(undefined);
-
-  isLoggedIn.subscribe(async (session) => {
-    if (session?.userId) {
-      user.set(await account());
-    }
-  });
+  import { user$, logout } from "../../lib/appwrite";
 
   const loginElem: HTMLElement | null =
     document.querySelector("#accountLoginLink");
   const userElem: HTMLElement | null = document.querySelector("#accountUser");
 
-  user.subscribe((user) => {
+  user$.subscribe((user) => {
     if (!loginElem || !userElem) return;
     if (user) {
       loginElem.style.display = "none";
@@ -30,7 +18,9 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
       const accountUserDetailElem: HTMLElement | null =
         document.querySelector("#accountUserDetail");
       if (accountUserDetailElem)
-        accountUserDetailElem.innerHTML = `Email: ${user.email}`;
+        accountUserDetailElem.innerHTML = `Email: ${user.email} Admin: ${
+          user.prefs.admin || false
+        }`;
     } else {
       loginElem.style.display = "block";
       userElem.style.display = "none";

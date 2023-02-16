@@ -25,7 +25,4 @@ type Props = BlogPostType;
 const post = Astro.props;
 ---
 
-<BlogPost {...post.data}>
-  <h1>{post.title}</h1>
-  {post.content}
-</BlogPost>
+<BlogPost {...post} />
