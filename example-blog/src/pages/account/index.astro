@@ -1,26 +1,59 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import SiteLayout from "../../layouts/SiteLayout.astro";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-  </head>
-  <body>
-    <Header title={SITE_TITLE} />
-    <main>
-      <h1>🧑‍🚀 Hello, Astronaut!</h1>
-      <p>
-        This example is the repo for the guide found on <a
-          href="https://docs.astro.build/en/guides/baas/appwriteio/"
-          >Astro's Doc Site</a
-        > for using Appwrite.io as a Backend as a Service.
-      </p>
-    </main>
-    <Footer />
-  </body>
-</html>
+<script>
+  import { isLoggedIn, logout, account } from "../../lib/appwrite";
+  import { atom, WritableAtom } from "nanostores";
+  import type { Models } from "appwrite";
+
+  export const user: WritableAtom<
+    undefined | Models.Account<Models.Preferences>
+  > = atom(undefined);
+
+  isLoggedIn.subscribe(async (session) => {
+    if (session?.userId) {
+      user.set(await account());
+    }
+  });
+
+  const loginElem: HTMLElement | null =
+    document.querySelector("#accountLoginLink");
+  const userElem: HTMLElement | null = document.querySelector("#accountUser");
+
+  user.subscribe((user) => {
+    if (!loginElem || !userElem) return;
+    if (user) {
+      loginElem.style.display = "none";
+      userElem.style.display = "block";
+
+      const accountUserDetailElem: HTMLElement | null =
+        document.querySelector("#accountUserDetail");
+      if (accountUserDetailElem)
+        accountUserDetailElem.innerHTML = `Email: ${user.email}`;
+    } else {
+      loginElem.style.display = "block";
+      userElem.style.display = "none";
+    }
+  });
+
+  const logoutElem: HTMLButtonElement | null = document.querySelector("button");
+  logoutElem?.addEventListener("click", (e) => {
+    logout();
+  });
+</script>
+
+<SiteLayout>
+  <h1>Account</h1>
+
+  <section id="accountLoginLink">
+    <a href="/account/login">Login</a>
+  </section>
+
+  <section id="accountUser">
+    <div style="">
+      <button>Logout</button>
+      <section id="accountUserDetail"></section>
+    </div>
+  </section>
+</SiteLayout>

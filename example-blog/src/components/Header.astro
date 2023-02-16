@@ -1,13 +1,14 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
 import { SITE_TITLE } from "../consts";
+import Account from "./Account.astro";
 ---
 
 <header>
   <h2>
     {SITE_TITLE}
   </h2>
-  <nav>
+  <nav style="display:flex">
     <HeaderLink href="/">Home</HeaderLink>
     <HeaderLink href="/blog">Blog</HeaderLink>
     <HeaderLink href="/about">About</HeaderLink>
@@ -17,6 +18,7 @@ import { SITE_TITLE } from "../consts";
     <HeaderLink href="https://github.com/appwrite" target="_blank">
       GitHub
     </HeaderLink>
+    <Account />
   </nav>
 </header>
 <style>

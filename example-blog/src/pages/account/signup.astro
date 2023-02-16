@@ -1,0 +1,50 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+---
+
+<script>
+  import type { AppwriteException } from "appwrite";
+  import { register } from "../../lib/appwrite";
+  const formElem: HTMLFormElement | null = document.querySelector("form");
+
+  formElem?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const emailElem: HTMLInputElement | null =
+      formElem.querySelector('input[id="email"]');
+    const passwordElem: HTMLInputElement | null = formElem.querySelector(
+      'input[id="password"]'
+    );
+    const email = emailElem?.value;
+    const password = passwordElem?.value;
+
+    if (!email) {
+      alert("Email is required.");
+      return;
+    }
+
+    if (!password) {
+      alert("Password is required.");
+      return;
+    }
+
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters long.");
+      return;
+    }
+    register(email, password);
+  });
+</script>
+
+<SiteLayout>
+  <h1>Sign Up</h1>
+  <form>
+    <label for="email"> Email</label>
+    <input id="email" type="email" required />
+
+    <label for="password"> Password</label>
+    <input id="password" type="password" required />
+
+    <button type="submit">Register</button>
+  </form>
+  <a href="/account/login">Login</a>
+</SiteLayout>
