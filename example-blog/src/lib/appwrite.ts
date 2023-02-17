@@ -52,6 +52,7 @@ export const login = async (email: string, password: string) => {
 export const logout = async () => {
     try {
         const session = isLoggedIn.get();
+        console.log(session)
         if (session?.$id) {
             await appwriteAccount.deleteSession(session?.$id);
             isLoggedIn.set(undefined);

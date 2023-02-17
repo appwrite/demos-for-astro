@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
+import SideNav from "../components/SideNav.astro";
 import Footer from "../components/Footer.astro";
 import AdminButtons from "../components/AdminButtons.astro";
 
@@ -16,39 +17,39 @@ const { date, $updatedAt, slug, title, content, description, cover } =
   <head>
     <BaseHead title={title} description={description} />
     <style>
-      .title {
-        font-size: 2em;
-        margin: 0.25em 0 0;
-      }
       hr {
         border-top: 1px solid #ddd;
         margin: 1rem 0;
       }
     </style>
   </head>
-
   <body>
-    <Header />
-    <main>
-      <article>
-        {cover && <img width={720} height={360} src={cover} alt="" />}
-        <h1 class="title">{title}</h1>
-        <div style="display:flex; gap: .5rem">
-          {date && <time>{new Date(date).toLocaleDateString()}</time>}
-          {
-            $updatedAt && (
-              <div>
-                Last updated on{" "}
-                <time>{new Date($updatedAt).toLocaleDateString()}</time>
-              </div>
-            )
-          }
-        </div>
-        <AdminButtons />
-        <hr class="hr" />
-        {content}
-      </article>
-    </main>
-    <Footer />
+    <div class="grid-with-side">
+      <Header />
+      <SideNav />
+      <main class="main-content">
+        <article class="container">
+          {cover && <img width={720} height={360} src={cover} alt="" />}
+          <h1 class="heading-level-1" style="position:relative;">
+            {title}
+            <AdminButtons />
+          </h1>
+          <div style="display:flex; gap: .5rem">
+            {date && <time>{new Date(date).toLocaleDateString()}</time>}
+            {
+              $updatedAt && (
+                <div>
+                  Last updated on{" "}
+                  <time>{new Date($updatedAt).toLocaleDateString()}</time>
+                </div>
+              )
+            }
+          </div>
+          <hr class="hr" />
+          {content}
+        </article>
+      </main>
+      <Footer />
+    </div>
   </body>
 </html>

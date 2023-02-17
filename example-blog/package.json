@@ -10,6 +10,7 @@
 		"astro": "astro"
 	},
 	"dependencies": {
+		"@appwrite.io/pink": "^0.0.5",
 		"@astrojs/mdx": "^0.16.0",
 		"@astrojs/rss": "^2.1.0",
 		"@astrojs/sitemap": "^1.0.1",

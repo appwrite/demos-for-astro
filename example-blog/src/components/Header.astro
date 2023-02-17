@@ -1,31 +1,98 @@
 ---
-import HeaderLink from "./HeaderLink.astro";
-import { SITE_TITLE } from "../consts";
-import Account from "./Account.astro";
+import HeaderAccount from "../components/HeaderAccount.astro";
 ---
 
-<header>
-  <h2>
-    {SITE_TITLE}
-  </h2>
-  <nav style="display:flex">
-    <HeaderLink href="/">Home</HeaderLink>
-    <HeaderLink href="/blog">Blog</HeaderLink>
-    <HeaderLink href="/about">About</HeaderLink>
-    <HeaderLink href="https://twitter.com/appwrite" target="_blank">
-      Twitter
-    </HeaderLink>
-    <HeaderLink href="https://github.com/appwrite" target="_blank">
-      GitHub
-    </HeaderLink>
-    <Account />
-  </nav>
+<script>
+  const btnLightElem: HTMLButtonElement | null = document.querySelector(
+    "#theme-toggle-light"
+  );
+  const btnDarkElem: HTMLButtonElement | null =
+    document.querySelector("#theme-toggle-dark");
+
+  function setTheme() {
+    const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const theme =
+      localStorage.getItem("theme") ??
+      (defaultTheme.matches ? "dark" : "light");
+    if (btnLightElem && btnDarkElem) {
+      if (theme === "dark") {
+        document.body.classList.remove("theme-light");
+        document.body.classList.add("theme-dark");
+        btnLightElem.style.display = "none";
+        btnDarkElem.style.display = "block";
+      } else {
+        document.body.classList.remove("theme-dark");
+        document.body.classList.add("theme-light");
+        btnLightElem.style.display = "block";
+        btnDarkElem.style.display = "none";
+      }
+    }
+  }
+
+  function toggleTheme() {
+    const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const theme =
+      localStorage.getItem("theme") ??
+      (defaultTheme.matches ? "dark" : "light");
+    if (theme === "dark") {
+      localStorage.setItem("theme", "light");
+      document.body.classList.remove("theme-dark");
+      document.body.classList.add("theme-light");
+
+      if (btnLightElem && btnDarkElem) {
+        btnLightElem.style.display = "block";
+        btnDarkElem.style.display = "none";
+      }
+    } else {
+      localStorage.setItem("theme", "dark");
+      document.body.classList.remove("theme-light");
+      document.body.classList.add("theme-dark");
+      if (btnLightElem && btnDarkElem) {
+        btnLightElem.style.display = "none";
+        btnDarkElem.style.display = "block";
+      }
+    }
+  }
+
+  //Check for theme on load
+  if (btnLightElem && btnDarkElem) {
+    setTheme();
+    btnLightElem?.addEventListener("click", (e) => {
+      toggleTheme();
+    });
+    btnDarkElem?.addEventListener("click", (e) => {
+      toggleTheme();
+    });
+  }
+</script>
+
+<header class="main-header u-padding-inline-end-0">
+  <button class="icon-button is-not-desktop nav-btn" aria-label="Open Menu">
+    <span aria-hidden="true" class="icon-menu"></span>
+  </button>
+  <a class="logo" href="/"> My Blog</a>
+  <div class="main-header-end u-margin-inline-end-16">
+    <ul class="buttons-list is-with-padding">
+      <li class="buttons-list-item u-padding-inline-0">
+        <!-- Light -->
+        <button
+          id="theme-toggle-light"
+          class="button is-only-icon is-text"
+          aria-label="Replace to Dark Mode Theme"
+        >
+          <span class="icon-sun" aria-hidden="true"></span>
+        </button>
+        <!-- Dark -->
+        <button
+          id="theme-toggle-dark"
+          class="button is-only-icon is-text"
+          x-on:click="toggleTheme(); theme = 'light'"
+          aria-label="Replace to Light Mode Theme"
+        >
+          <span class="icon-moon" aria-hidden="true"></span>
+        </button>
+      </li>
+    </ul>
+    <HeaderAccount />
+  </div>
 </header>
-<style>
-  header {
-    margin: 0em 0 2em;
-  }
-  h2 {
-    margin: 0.5em 0;
-  }
-</style>

@@ -36,15 +36,17 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 </script>
 
 <SiteLayout>
-  <h1>Sign Up</h1>
-  <form>
-    <label for="email"> Email</label>
-    <input id="email" type="email" required />
+  <section class="u-flex u-flex-vertical u-gap-4">
+    <h1 class="heading-level-1">Sign Up</h1>
+    <form class="u-flex u-flex-vertical u-gap-4">
+      <label for="email"> Email</label>
+      <input id="email" type="email" required />
 
-    <label for="password"> Password</label>
-    <input id="password" type="password" required />
+      <label for="password"> Password</label>
+      <input id="password" type="password" required />
 
-    <button type="submit">Register</button>
-  </form>
-  <a href="/account/login">Login</a>
+      <button type="submit" class="button">Register</button>
+    </form>
+    <a href="/account/login" style="text-decoration: underline">Login</a>
+  </section>
 </SiteLayout>

@@ -2,12 +2,28 @@
 const today = new Date();
 ---
 
-<footer>
-  &copy; {today.getFullYear()} Appwrite.io All rights reserved.
+<footer class="main-footer u-margin-block-start-100">
+  <div class="main-footer-start">
+    <ul class="inline-links is-no-padding-first-and-last u-x-small">
+      <li class="inline-links-item">
+        <a href="https://appwrite.io/policy/terms" target="_blank"
+          ><span class="text">Terms</span>
+        </a>
+      </li>
+      <li class="inline-links-item">
+        <a href="https://appwrite.io/policy/privacy" target="_blank"
+          ><span class="text">Privacy</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="main-footer-end">
+    <ul class="inline-links is-no-padding-first-and-last u-x-small">
+      <li class="inline-links-item">
+        <span class="text"
+          >&copy; {today.getFullYear()} Appwrite.io All rights reserved.</span
+        >
+      </li>
+    </ul>
+  </div>
 </footer>
-<style>
-  footer {
-    padding: 25px;
-    text-align: center;
-  }
-</style>

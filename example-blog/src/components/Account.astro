@@ -1,5 +1,5 @@
 ---
-import HeaderLink from "./HeaderLink.astro";
+import NavLink from "./NavLink.astro";
 ---
 
 <script>
@@ -21,9 +21,16 @@ import HeaderLink from "./HeaderLink.astro";
   });
 </script>
 
-<div style="display:flex">
-  <HeaderLink id="login" href="/account/login">Login</HeaderLink>
-  <HeaderLink style="display:none" id="account" href="/account">
-    Account
-  </HeaderLink>
+<div id="login">
+  <NavLink href="/account/login">
+    <span class="icon-cog" aria-hidden="true"></span>
+    <span class="text"> Login</span>
+  </NavLink>
 </div>
+<div id="account">
+  <NavLink href="/account">
+    <span class="icon-cog" aria-hidden="true"></span>
+    <span class="text"> Account</span>
+  </NavLink>
+</div>
+
