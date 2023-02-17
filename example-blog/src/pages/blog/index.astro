@@ -1,6 +1,7 @@
 ---
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { appwriteDatabases, BlogPostList } from "../../lib/appwrite";
+import AdminButtons from "../../components/AdminButtons.astro";
 
 const entries = (await appwriteDatabases.listDocuments(
   import.meta.env.PUBLIC_APPWRITE_DB_ID,
@@ -18,7 +19,7 @@ const posts = entries.documents.sort(
     <ul class="list">
       {
         posts.map((post) => (
-          <li class="list-item">
+          <li class="list-item u-position-relative">
             <span class="icon-arrow-circle-right" aria-hidden="true" />
 
             <time datetime={post.date}>
@@ -31,6 +32,7 @@ const posts = entries.documents.sort(
             <a href={`/blog/${post.slug}/`} style="text-decoration: underline;">
               {post.title}
             </a>
+            <AdminButtons poststring={JSON.stringify(post)} />
           </li>
         ))
       }

@@ -1,30 +1,71 @@
-<button id="modal-delete-show" class="button is-secondary"
-  ><span><slot /></span></button
->
-<dialog id="modal-delete-dialog" class="modal" id="dialog">
-  <form class="modal-form" method="dialog">
-    <header class="modal-header">
-      <div class="avatar is-color-orange is-medium">
-        <span class="icon-exclamation" aria-hidden="true"></span>
-      </div>
-      <h4 class="modal-title heading-level-5">Delete?</h4>
-      <button
-        class="button is-text is-small is-only-icon"
-        aria-label="Close modal"
-      >
-        <span class="icon-x" aria-hidden="true"></span>
-      </button>
-    </header>
-    <div class="modal-content u-small"></div>
-    <div class="modal-footer">
-      <div class="u-flex u-main-end u-gap-16">
-        <button class="button is-text" value="false"
-          ><span class="text">Cancel</span></button
+---
+import type { BlogPost } from "../lib/appwrite";
+
+interface Props {
+  poststring: string;
+}
+const { poststring } = Astro.props;
+const post: BlogPost = JSON.parse(poststring);
+---
+
+<appwrite-admin-delete data-poststring={poststring}>
+  <button id="modal-delete-show" class="button is-secondary"
+    ><span><slot /></span></button
+  >
+  <dialog id="modal-delete-dialog" class="modal" id="dialog">
+    <form class="modal-form" method="dialog">
+      <header class="modal-header">
+        <div class="avatar is-color-orange is-medium">
+          <span class="icon-exclamation" aria-hidden="true"></span>
+        </div>
+        <h4 class="modal-title heading-level-5">Delete?</h4>
+        <button
+          class="button is-text is-small is-only-icon"
+          aria-label="Close modal"
         >
-        <button class="button is-secondary" value="true"
-          ><span class="text">Delete</span></button
-        >
+          <span class="icon-x" aria-hidden="true"></span>
+        </button>
+      </header>
+      <div class="modal-content u-small">
+        <h5>{post?.title}</h5>
       </div>
-    </div>
-  </form>
-</dialog>
+      <div class="modal-footer">
+        <div class="u-flex u-main-end u-gap-16">
+          <button class="button is-text" value=""
+            ><span class="text">Cancel</span></button
+          >
+          <button class="button is-secondary" value={post?.$id}
+            ><span class="text">Delete</span></button
+          >
+        </div>
+      </div>
+    </form>
+  </dialog>
+</appwrite-admin-delete>
+<script>
+  import type { BlogPost } from "../lib/appwrite";
+
+  class AppwriteAdminDelete extends HTMLElement {
+    constructor() {
+      super();
+      if (!this.dataset.poststring) return;
+      const post: BlogPost = JSON.parse(this.dataset.poststring);
+      console.log("post", post);
+      //Modal
+      const modalDeleteShowElem: HTMLButtonElement | null =
+        this.querySelector("#modal-delete-show");
+      const modalDeleteDialogElem: HTMLDialogElement | null =
+        this.querySelector("#modal-delete-dialog");
+
+      if (modalDeleteShowElem && modalDeleteDialogElem) {
+        modalDeleteShowElem.addEventListener("click", () => {
+          modalDeleteDialogElem.showModal();
+        });
+        modalDeleteDialogElem.addEventListener("close", () => {
+          console.log(modalDeleteDialogElem.returnValue);
+        });
+      }
+    }
+  }
+  customElements.define("appwrite-admin-delete", AppwriteAdminDelete);
+</script>

@@ -1,54 +1,19 @@
 ---
 import ModalDelete from "./ModalDelete.astro";
+
+// Notice: You don't need to send the full post string
+// but I wanted to show how you can use the data from
+// post in the delete dialog to build both the dialog
+// as well as trigger the action.
+interface Props {
+  poststring: string;
+}
+const { poststring } = Astro.props;
 ---
 
-<script>
-  // Check if user has session
-  import { user$ } from "../lib/appwrite";
-
-  const adminButtonsElem: HTMLElement | null =
-    document.querySelector("#adminButtons");
-
-  // Show Buttons if user is an admin
-  user$.subscribe((user) => {
-    if (!adminButtonsElem) return;
-    if (user && user.prefs.admin) {
-      adminButtonsElem.style.display = "block";
-    } else {
-      adminButtonsElem.style.display = "none";
-    }
-  });
-
-  //Modal
-  const modalDeleteShowElem: HTMLButtonElement | null =
-    document.querySelector("#modal-delete-show");
-  const modalDeleteDialogElem: HTMLDialogElement | null =
-    document.querySelector("#modal-delete-dialog");
-
-  if (modalDeleteShowElem && modalDeleteDialogElem) {
-    modalDeleteShowElem.addEventListener("click", () => {
-      modalDeleteDialogElem.showModal();
-    });
-    modalDeleteDialogElem.addEventListener("close", () => {});
-  }
-</script>
-<style>
-  button {
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    cursor: pointer;
-  }
-  #adminButtons {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 1rem 1rem 0 0;
-  }
-</style>
-<section id="adminButtons" style="display: none">
+<section class="adminButtons" style="display: none">
   <div style="display:flex; gap: 0.5rem">
-    <ModalDelete>
+    <ModalDelete poststring={poststring}>
       <span class="icon-trash" aria-hidden="true"></span>
       <span class="text">Delete</span>
     </ModalDelete>
@@ -58,3 +23,35 @@ import ModalDelete from "./ModalDelete.astro";
     </button>
   </div>
 </section>
+
+<script>
+  // Check if user has session
+  import { user$ } from "../lib/appwrite";
+
+  // This gets ALL buttons on the screen
+  const adminButtonsElem: NodeListOf<HTMLElement> | null =
+    document.querySelectorAll(".adminButtons");
+
+  // Show Buttons if user is an admin
+  user$.subscribe((user) => {
+    if (!adminButtonsElem) return;
+    if (user && user.prefs.admin) {
+      Array.from(adminButtonsElem).map((b) => (b.style.display = "block"));
+    } else {
+      Array.from(adminButtonsElem).map((b) => (b.style.display = "none"));
+    }
+  });
+</script>
+<style>
+  button {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    cursor: pointer;
+  }
+  .adminButtons {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+</style>
