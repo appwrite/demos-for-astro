@@ -15,10 +15,7 @@ import Account from "./Account.astro";
           </NavLink>
         </li>
         <li class="drop-list-item">
-          <NavLink href="/about">
-            <span class="icon-document" aria-hidden="true"></span>
-            <span class="text">About</span>
-          </NavLink>
+          <Account />
         </li>
       </ul>
     </section>
@@ -27,7 +24,22 @@ import Account from "./Account.astro";
     <section class="drop-section">
       <ul class="drop-list">
         <li class="drop-list-item">
-          <Account />
+          <NavLink
+            href="https://docs.astro.build/en/guides/baas/appwriteio/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="icon-document" aria-hidden="true"></span>
+            <span class="text">Astro Doc</span>
+          </NavLink>
+          <NavLink
+            href="https://github.com/appwrite/demos-for-astro"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="icon-github" aria-hidden="true"></span>
+            <span class="text">GitHub Repo</span>
+          </NavLink>
         </li>
       </ul>
     </section>
