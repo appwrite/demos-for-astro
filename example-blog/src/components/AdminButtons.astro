@@ -1,3 +1,7 @@
+---
+import ModalDelete from "./ModalDelete.astro";
+---
+
 <script>
   // Check if user has session
   import { user$ } from "../lib/appwrite";
@@ -14,6 +18,19 @@
       adminButtonsElem.style.display = "none";
     }
   });
+
+  //Modal
+  const modalDeleteShowElem: HTMLButtonElement | null =
+    document.querySelector("#modal-delete-show");
+  const modalDeleteDialogElem: HTMLDialogElement | null =
+    document.querySelector("#modal-delete-dialog");
+
+  if (modalDeleteShowElem && modalDeleteDialogElem) {
+    modalDeleteShowElem.addEventListener("click", () => {
+      modalDeleteDialogElem.showModal();
+    });
+    modalDeleteDialogElem.addEventListener("close", () => {});
+  }
 </script>
 <style>
   button {
@@ -31,10 +48,10 @@
 </style>
 <section id="adminButtons" style="display: none">
   <div style="display:flex; gap: 0.5rem">
-    <button class="button is-secondary" aria-label="Delete Blog">
+    <ModalDelete>
       <span class="icon-trash" aria-hidden="true"></span>
       <span class="text">Delete</span>
-    </button>
+    </ModalDelete>
     <button class="button is-secondary" aria-label="Edit Blog">
       <span class="icon-pencil" aria-hidden="true"></span>
       <span class="text">Edit</span>
