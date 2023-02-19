@@ -9,8 +9,8 @@ import AdminButtons from "../components/AdminButtons.astro";
 import type { BlogPost as BlogPostType } from "../lib/appwrite";
 type Props = BlogPostType;
 
-const { date, $updatedAt, slug, title, content, description, cover } =
-  Astro.props;
+const post = Astro.props;
+const { date, $updatedAt, slug, title, content, description, cover } = post;
 ---
 
 <html lang="en">
@@ -32,7 +32,7 @@ const { date, $updatedAt, slug, title, content, description, cover } =
           {cover && <img width={720} height={360} src={cover} alt="" />}
           <h1 class="heading-level-1" style="position:relative;">
             {title}
-            <AdminButtons />
+            <AdminButtons poststring={JSON.stringify(post)} />
           </h1>
           <div style="display:flex; gap: .5rem">
             {date && <time>{new Date(date).toLocaleDateString()}</time>}
