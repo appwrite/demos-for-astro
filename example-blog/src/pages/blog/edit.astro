@@ -1,14 +1,15 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import SideNav from "../components/SideNav.astro";
-import Footer from "../components/Footer.astro";
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import SideNav from "../../components/SideNav.astro";
+import Footer from "../../components/Footer.astro";
 ---
 
 <script>
-  import { appwriteDatabases, BlogPost } from "../lib/appwrite";
+  import type { AppwriteException } from "appwrite";
+  import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
 
-  import { dateForDateTimeInputValue } from "../lib/utilities";
+  import { dateForDateTimeInputValue } from "../../lib/utilities";
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -49,11 +50,20 @@ import Footer from "../components/Footer.astro";
           content.value = post?.content || "";
         }
 
-        form.addEventListener("submit", (event) => {
+        form.addEventListener("submit", async (event) => {
           event.preventDefault();
           const formData = new FormData(form);
-          for (const [key, value] of formData) {
-            console.log(value);
+          try {
+            await appwriteDatabases.updateDocument(
+              import.meta.env.PUBLIC_APPWRITE_DB_ID,
+              import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID,
+              id,
+              Object.fromEntries(formData)
+            );
+            alert("Updated.");
+          } catch (error) {
+            const appwriteError = error as AppwriteException;
+            alert(appwriteError.message);
           }
         });
       }

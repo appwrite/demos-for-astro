@@ -43,7 +43,8 @@ const post: BlogPost = JSON.parse(poststring);
   </dialog>
 </appwrite-admin-delete>
 <script>
-  import type { BlogPost } from "../lib/appwrite";
+  import type { AppwriteException } from "appwrite";
+  import { appwriteDatabases, BlogPost } from "../lib/appwrite";
 
   class AppwriteAdminDelete extends HTMLElement {
     constructor() {
@@ -61,8 +62,21 @@ const post: BlogPost = JSON.parse(poststring);
         modalDeleteShowElem.addEventListener("click", () => {
           modalDeleteDialogElem.showModal();
         });
-        modalDeleteDialogElem.addEventListener("close", () => {
-          console.log(modalDeleteDialogElem.returnValue);
+        modalDeleteDialogElem.addEventListener("close", async () => {
+          if (!modalDeleteDialogElem.returnValue) {
+            return;
+          }
+          try {
+            const post = await appwriteDatabases.deleteDocument(
+              import.meta.env.PUBLIC_APPWRITE_DB_ID,
+              import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID,
+              modalDeleteDialogElem.returnValue
+            );
+            window.location.replace(`/blog`);
+          } catch (error) {
+            const appwriteError = error as AppwriteException;
+            alert(appwriteError.message);
+          }
         });
       }
     }

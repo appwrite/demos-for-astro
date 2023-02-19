@@ -1,4 +1,5 @@
 ---
+import { Query } from "appwrite";
 import BlogPost from "../../layouts/BlogPost.astro";
 import {
   appwriteDatabases,
@@ -6,23 +7,23 @@ import {
   BlogPostList,
 } from "../../lib/appwrite";
 
-export async function getStaticPaths() {
-  const entries = (await appwriteDatabases.listDocuments(
-    import.meta.env.PUBLIC_APPWRITE_DB_ID,
-    import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID
-  )) as BlogPostList;
+const { slug } = Astro.params;
 
-  const posts = entries.documents.sort(
-    (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
-  );
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: post,
-  }));
+if (!slug) {
+  return Astro.redirect("/404");
 }
-type Props = BlogPostType;
 
-const post = Astro.props;
+const entries = (await appwriteDatabases.listDocuments(
+  import.meta.env.PUBLIC_APPWRITE_DB_ID,
+  import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID,
+  [Query.equal("slug", slug)]
+)) as BlogPostList;
+
+if (!entries || !entries.documents.length) {
+  return Astro.redirect("/404");
+}
+
+const post: BlogPostType = entries?.documents[0];
 ---
 
 <BlogPost {...post} />

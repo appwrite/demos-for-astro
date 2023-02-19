@@ -2,6 +2,7 @@
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { appwriteDatabases, BlogPostList } from "../../lib/appwrite";
 import AdminButtons from "../../components/AdminButtons.astro";
+import AdminCreate from "../../components/AdminCreate.astro";
 
 const entries = (await appwriteDatabases.listDocuments(
   import.meta.env.PUBLIC_APPWRITE_DB_ID,
@@ -14,8 +15,11 @@ const posts = entries.documents.sort(
 ---
 
 <SiteLayout>
-  <h class="heading-level-1">Blog</h>
   <section class="container">
+    <section class="u-position-relative">
+      <AdminCreate />
+    </section>
+    <h1 class="heading-level-1">Blog</h1>
     <ul class="list">
       {
         posts.map((post) => (

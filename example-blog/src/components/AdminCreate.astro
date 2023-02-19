@@ -1,31 +1,8 @@
----
-import type { BlogPost } from "../lib/appwrite";
-import ModalDelete from "./ModalDelete.astro";
-
-// Notice: You don't need to send the full post string
-// but I wanted to show how you can use the data from
-// post in the delete dialog to build both the dialog
-// as well as trigger the action.
-interface Props {
-  poststring: string;
-}
-const { poststring } = Astro.props;
-const post = JSON.parse(poststring);
----
-
 <section class="adminButtons" style="display: none">
   <div style="display:flex; gap: 0.5rem">
-    <ModalDelete poststring={poststring}>
-      <span class="icon-trash" aria-hidden="true"></span>
-      <span class="text">Delete</span>
-    </ModalDelete>
-    <a
-      class="button is-secondary"
-      href={`/blog/edit?id=${post.$id}`}
-      aria-label="Edit Blog"
-    >
-      <span class="icon-pencil" aria-hidden="true"></span>
-      <span class="text">Edit</span>
+    <a class="button" href={`/blog/create`} aria-label="Create Blog">
+      <span class="icon-plus" aria-hidden="true"></span>
+      <span class="text">Create</span>
     </a>
   </div>
 </section>
@@ -50,8 +27,6 @@ const post = JSON.parse(poststring);
 </script>
 <style>
   button {
-    width: 3rem;
-    height: 3rem;
     display: flex;
     cursor: pointer;
   }
