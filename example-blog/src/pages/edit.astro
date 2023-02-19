@@ -1,0 +1,108 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import SideNav from "../components/SideNav.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<script>
+  import { appwriteDatabases, BlogPost } from "../lib/appwrite";
+
+  import { dateForDateTimeInputValue } from "../lib/utilities";
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const id = urlParams.get("id");
+
+  if (!id) {
+    alert("No ID selected.");
+  } else {
+    const post = (await appwriteDatabases.getDocument(
+      import.meta.env.PUBLIC_APPWRITE_DB_ID,
+      import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID,
+      id
+    )) as BlogPost;
+
+    if (!post) {
+      alert("ID not found for this document.");
+    } else {
+      const form: HTMLFormElement | null = document.querySelector("form");
+      if (!form) {
+        alert("Missing Form");
+      } else {
+        // Set form value from post
+        const title: HTMLInputElement | null =
+          form.querySelector('[name="title"]');
+        const date: HTMLInputElement | null =
+          form.querySelector('[name="date"]');
+        const description: HTMLInputElement | null = form.querySelector(
+          '[name="description"]'
+        );
+        const content: HTMLInputElement | null =
+          form.querySelector('[name="content"]');
+        if (title && description && content && date) {
+          title.value = post?.title || "";
+          date.value = post?.date
+            ? dateForDateTimeInputValue(new Date(post.date))
+            : dateForDateTimeInputValue(new Date());
+          description.value = post?.description || "";
+          content.value = post?.content || "";
+        }
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          for (const [key, value] of formData) {
+            console.log(value);
+          }
+        });
+      }
+    }
+  }
+</script>
+
+<html lang="en">
+  <head>
+    <BaseHead title="Edit" description="Edit Post" />
+  </head>
+  <body>
+    <div class="grid-with-side">
+      <Header />
+      <SideNav />
+      <main class="main-content">
+        <div class="container">
+          <form
+            class="form u-width-full-line u-max-width-500 u-flex u-flex-vertical u-gap-16"
+          >
+            <ul class="form-list">
+              <li class="form-item">
+                <label class="label">Title</label>
+                <input name="title" type="text" class="input-text" />
+              </li>
+              <li class="form-item u-flex u-flex-vertical">
+                <label class="label">Date</label>
+                <input
+                  class="input-text"
+                  type="datetime-local"
+                  step="1"
+                  name="date"
+                />
+              </li>
+              <li class="form-item">
+                <label class="label">Description</label>
+                <input name="description" type="text" class="input-text" />
+              </li>
+
+              <li class="form-item">
+                <label class="label">Content</label>
+                <textarea name="content" class="input-text"></textarea>
+              </li>
+            </ul>
+            <button type="submit" class="button">Update</button>
+          </form>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>
