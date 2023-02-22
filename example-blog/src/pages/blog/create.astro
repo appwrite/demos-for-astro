@@ -21,7 +21,7 @@ import Footer from "../../components/Footer.astro";
       try {
         const post = await appwriteDatabases.createDocument(
           import.meta.env.PUBLIC_APPWRITE_DB_ID,
-          import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID,
+          import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
           ID.unique(),
           Object.fromEntries(formData)
         );

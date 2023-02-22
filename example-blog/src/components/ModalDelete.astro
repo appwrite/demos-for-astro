@@ -51,7 +51,6 @@ const post: BlogPost = JSON.parse(poststring);
       super();
       if (!this.dataset.poststring) return;
       const post: BlogPost = JSON.parse(this.dataset.poststring);
-      console.log("post", post);
       //Modal
       const modalDeleteShowElem: HTMLButtonElement | null =
         this.querySelector("#modal-delete-show");
@@ -67,9 +66,9 @@ const post: BlogPost = JSON.parse(poststring);
             return;
           }
           try {
-            const post = await appwriteDatabases.deleteDocument(
+            await appwriteDatabases.deleteDocument(
               import.meta.env.PUBLIC_APPWRITE_DB_ID,
-              import.meta.env.PUBLIC_APPWRITE_COLLECTION_ID,
+              import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
               modalDeleteDialogElem.returnValue
             );
             window.location.replace(`/blog`);

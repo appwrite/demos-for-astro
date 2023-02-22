@@ -15,8 +15,14 @@ export interface BlogPost extends Models.Document {
     slug: string;
     cover: string;
 }
-
 export interface BlogPostList extends Models.DocumentList<BlogPost> { }
+
+export interface BlogComment extends Models.Document {
+    postId: string;
+    comment: string;
+}
+export interface BlogCommentList extends Models.DocumentList<BlogComment> { }
+
 export const appwriteDatabases = new Databases(appwriteClient);
 
 /** Account */

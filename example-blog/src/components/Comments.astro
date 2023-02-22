@@ -1,0 +1,110 @@
+---
+interface Props {
+  postId: string;
+}
+const { postId } = Astro.props;
+---
+
+<appwrite-post-comments data-postid={postId}>
+  <ul class="list"></ul>
+</appwrite-post-comments>
+<script>
+  import { AppwriteException, Query } from "appwrite";
+  import { atom, WritableAtom } from "nanostores";
+  import {
+    appwriteClient,
+    appwriteDatabases,
+    BlogComment,
+    BlogCommentList,
+  } from "../lib/appwrite";
+
+  class AppwritePostComments extends HTMLElement {
+    databaseId = import.meta.env.PUBLIC_APPWRITE_DB_ID;
+    collectionId = import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID;
+    postId: string = "";
+    comments$: WritableAtom<BlogComment[]> = atom([]);
+
+    constructor() {
+      super();
+      if (!this.dataset.postid) return;
+
+      this.postId = this.dataset.postid;
+      this.loadComments();
+      this.subComments();
+
+      this.comments$.listen((commentEvent) => {
+        const commentsElem: HTMLUListElement | null =
+          this.querySelector(".list");
+        if (commentsElem) {
+          commentsElem.replaceChildren();
+          commentEvent.map((c) => {
+            const commentItem = `<li class="list-item" data-postid="${c?.$id}">
+          <span class="icon-chat" aria-hidden="true"></span>
+          <span class="text">${c?.comment}</span>
+        </li>`;
+            commentsElem.insertAdjacentHTML("beforeend", commentItem);
+          });
+        }
+      });
+    }
+
+    async loadComments() {
+      try {
+        const comments = await appwriteDatabases.listDocuments(
+          this.databaseId,
+          this.collectionId,
+          [Query.equal("postId", this.postId), Query.orderDesc("$createdAt")]
+        );
+        this.comments$.set(comments.documents as BlogComment[]);
+      } catch (error) {
+        const appwriteError = error as AppwriteException;
+        alert(appwriteError.message);
+      }
+    }
+
+    async subComments() {
+      const sub = `databases.${this.databaseId}.collections.${this.collectionId}.documents`;
+      try {
+        appwriteClient.subscribe(sub, (response) => {
+          const updatedComment: BlogComment = response.payload as BlogComment;
+          if (updatedComment.postId !== this.postId) {
+            console.debug(
+              `postId: ${updatedComment.postId} does not match current post ${this.postId}`
+            );
+            return;
+          }
+
+          if (response.events.includes(`${sub}.${updatedComment.$id}.create`)) {
+            console.debug(`Adding: ${updatedComment.$id}`);
+            // Append new payload to the list
+            this.comments$.set([...this.comments$.get(), ...[updatedComment]]);
+          } else if (
+            response.events.includes(`${sub}.${updatedComment.$id}.update`)
+          ) {
+            console.debug(`Updating: ${updatedComment.$id}`);
+            // Find payload item and update
+            const comments = this.comments$.get();
+            this.comments$.set([
+              ...comments.map((c) =>
+                c.$id === updatedComment.$id ? updatedComment : c
+              ),
+            ]);
+          } else if (
+            response.events.includes(`${sub}.${updatedComment.$id}.delete`)
+          ) {
+            console.debug(`Removing: ${updatedComment.$id}`);
+            // Find and remove payload item
+            const comments = this.comments$.get();
+            this.comments$.set([
+              ...comments.filter((c) => c.$id !== updatedComment.$id),
+            ]);
+          }
+        });
+      } catch (error) {
+        const appwriteError = error as AppwriteException;
+        alert(appwriteError.message);
+      }
+    }
+  }
+  customElements.define("appwrite-post-comments", AppwritePostComments);
+</script>

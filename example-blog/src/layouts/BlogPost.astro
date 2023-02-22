@@ -5,12 +5,13 @@ import Header from "../components/Header.astro";
 import SideNav from "../components/SideNav.astro";
 import Footer from "../components/Footer.astro";
 import AdminButtons from "../components/AdminButtons.astro";
+import Comments from "../components/Comments.astro";
 
 import type { BlogPost as BlogPostType } from "../lib/appwrite";
 type Props = BlogPostType;
 
 const post = Astro.props;
-const { date, $updatedAt, slug, title, content, description, cover } = post;
+const { $id, $updatedAt, date, title, content, description, cover } = post;
 ---
 
 <html lang="en">
@@ -48,6 +49,9 @@ const { date, $updatedAt, slug, title, content, description, cover } = post;
           <hr class="hr" />
           {content}
         </article>
+        <section class="comments container">
+          <Comments postId={$id} />
+        </section>
       </main>
       <Footer />
     </div>
