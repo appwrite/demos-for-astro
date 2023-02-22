@@ -5,17 +5,30 @@ interface Props {
 const { postId } = Astro.props;
 ---
 
-<appwrite-post-comments data-postid={postId}>
-  <ul class="list"></ul>
+<appwrite-post-comments data-postid={postId} style="display: none;">
+  <div class="u-flex u-flex-vertical u-gap-16">
+    <form class="form u-width-full-line u-flex u-flex-vertical u-gap-16">
+      <ul class="form-list">
+        <li class="form-item">
+          <label class="label">Comments</label>
+          <input name="comment" type="text" class="input-text" />
+        </li>
+      </ul>
+      <button class="button u-cross-child-end" type="submit">Add Comment</button
+      >
+    </form>
+    <ul class="list"></ul>
+  </div>
 </appwrite-post-comments>
 <script>
-  import { AppwriteException, Query } from "appwrite";
+  import { AppwriteException, ID, Query } from "appwrite";
   import { atom, WritableAtom } from "nanostores";
   import {
     appwriteClient,
     appwriteDatabases,
     BlogComment,
     BlogCommentList,
+    user$,
   } from "../lib/appwrite";
 
   class AppwritePostComments extends HTMLElement {
@@ -29,21 +42,49 @@ const { postId } = Astro.props;
       if (!this.dataset.postid) return;
 
       this.postId = this.dataset.postid;
-      this.loadComments();
-      this.subComments();
+      // Only show comments for users logged in.
+      this.showUsers();
+    }
 
-      this.comments$.listen((commentEvent) => {
-        const commentsElem: HTMLUListElement | null =
-          this.querySelector(".list");
-        if (commentsElem) {
-          commentsElem.replaceChildren();
-          commentEvent.map((c) => {
-            const commentItem = `<li class="list-item" data-postid="${c?.$id}">
-          <span class="icon-chat" aria-hidden="true"></span>
-          <span class="text">${c?.comment}</span>
-        </li>`;
-            commentsElem.insertAdjacentHTML("beforeend", commentItem);
-          });
+    async showUsers() {
+      user$.subscribe((user) => {
+        if (user) {
+          this.style.display = "block";
+        } else {
+          this.style.display = "none";
+          return;
+        }
+        //Only users get comments
+        this.addCommentInput();
+        this.loadComments();
+        this.subComments();
+      });
+    }
+
+    addCommentInput() {
+      const formElem: HTMLFormElement | null = this.querySelector("form");
+      const btnElem: HTMLButtonElement | null = this.querySelector("button");
+
+      if (!formElem || !btnElem) return;
+
+      formElem.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const commentInputElem: HTMLInputElement | null =
+          formElem.querySelector('input[name="comment"]');
+        if (commentInputElem) {
+          const formData = new FormData(formElem);
+          try {
+            await appwriteDatabases.createDocument(
+              this.databaseId,
+              this.collectionId,
+              ID.unique(),
+              { ...Object.fromEntries(formData), postId: this.postId }
+            );
+            commentInputElem.value = "";
+          } catch (error) {
+            const appwriteError = error as AppwriteException;
+            alert(appwriteError.message);
+          }
         }
       });
     }
@@ -63,6 +104,21 @@ const { postId } = Astro.props;
     }
 
     async subComments() {
+      this.comments$.listen((commentEvent) => {
+        const commentsElem: HTMLUListElement | null =
+          this.querySelector(".list");
+        if (commentsElem) {
+          commentsElem.replaceChildren();
+          commentEvent.map((c) => {
+            const commentItem = `<li class="list-item" data-postid="${c?.$id}">
+          <span class="icon-chat" aria-hidden="true"></span>
+          <span class="text">${c?.comment}</span>
+        </li>`;
+            commentsElem.insertAdjacentHTML("beforeend", commentItem);
+          });
+        }
+      });
+
       const sub = `databases.${this.databaseId}.collections.${this.collectionId}.documents`;
       try {
         appwriteClient.subscribe(sub, (response) => {
@@ -77,7 +133,7 @@ const { postId } = Astro.props;
           if (response.events.includes(`${sub}.${updatedComment.$id}.create`)) {
             console.debug(`Adding: ${updatedComment.$id}`);
             // Append new payload to the list
-            this.comments$.set([...this.comments$.get(), ...[updatedComment]]);
+            this.comments$.set([...[updatedComment], ...this.comments$.get()]);
           } else if (
             response.events.includes(`${sub}.${updatedComment.$id}.update`)
           ) {
