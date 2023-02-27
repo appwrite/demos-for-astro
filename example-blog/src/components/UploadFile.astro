@@ -1,0 +1,60 @@
+---
+import type { BlogPost } from "../lib/appwrite";
+
+interface Props {
+  postId ?: string;
+}
+const { postId } = Astro.props;
+---
+<appwrite-upload-file data-postid={postId} >
+<input type="file" id="fileElem" accept="image/*" onchange="handleFiles(this.files)" style="display:none">   
+<div
+  class="box is-border-dashed is-no-shadow u-padding-24"
+  style="--box-border-radius:var(--border-radius-xsmall);"
+>
+  <div class="upload-file-box">
+    <div class="upload-file-box-image"><span class="icon-upload" aria-hidden="true"></span></div>
+    <div class="u-min-width-0 u-text-center">
+      <h5 class="upload-file-box-title heading-level-7 u-inline">
+        <span class="is-only-desktop">Drag and drop files here to upload</span>
+        <span class="is-not-desktop">Upload a File</span>
+      </h5>
+    </div>
+    <div class="u-flex u-main-center u-cross-center u-gap-16 u-flex-vertical-mobile">
+      <p class="upload-file-box-info body-text-2 u-normal">Max file size: 10MB</p>
+      <button type = "button" class="button is-secondary is-full-width-mobile">
+        <span class="text">Choose a file</span>
+      </button>
+    </div>
+  </div>
+</div>
+</appwrite-upload-file>
+<script>
+    class AppwriteUploadFile extends HTMLElement{
+        postId:string |undefined
+        constructor() {
+      super();
+
+      this.postId = this.dataset.postid;
+      const btnElem: HTMLButtonElement | null = this.querySelector("button");
+      const fileInputElem: HTMLInputElement | null =
+          this.querySelector("input");
+      if (!btnElem) return;
+      btnElem.addEventListener("click", async (e) => {
+        e.preventDefault();
+        
+        if (fileInputElem)
+        {
+            fileInputElem.click()
+        }
+      }
+        )
+        fileInputElem?.addEventListener("change", async (e) => {
+            console.log(e.currentTarget?.files)
+       
+        })
+
+    }
+    }
+    customElements.define ("appwrite-upload-file",AppwriteUploadFile)
+</script>
