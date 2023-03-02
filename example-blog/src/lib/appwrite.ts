@@ -6,6 +6,9 @@ export const appwriteClient = new Client()
     .setEndpoint(import.meta.env.PUBLIC_APPWRITE_ENDPOINT) // Your API Endpoint
     .setProject(import.meta.env.PUBLIC_APPWRITE_PROJECT_ID); // Your project ID
 
+export const appwriteDatabases = new Databases(appwriteClient);
+export const appwriteStorage = new Storage(appwriteClient);
+
 /** Database */
 export interface BlogPost extends Models.Document {
     title: string;
@@ -22,8 +25,6 @@ export interface BlogComment extends Models.Document {
     comment: string;
 }
 export interface BlogCommentList extends Models.DocumentList<BlogComment> { }
-
-export const appwriteDatabases = new Databases(appwriteClient);
 
 /** Account */
 export const appwriteAccount = new Account(appwriteClient);
@@ -89,9 +90,4 @@ export const account = async () => {
         const appwriteError = error as AppwriteException;
         alert(appwriteError.message)
     }
-}
-
-export const storage = () => {
-    const storage = new Storage(appwriteClient);
-    return storage
 }

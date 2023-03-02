@@ -7,17 +7,8 @@ interface Props {
 const { postId, imageUrl } = Astro.props;
 ---
 
-<appwrite-upload-file
-  data-postid={postId}
-  data-imageurl={imageUrl}
->
-  <input
-    type="file"
-    id="fileElem"
-    accept="image/*"
-    onchange="handleFiles(this.files)"
-    style="display:none"
-  />
+<appwrite-upload-file data-postid={postId} data-imageurl={imageUrl}>
+  <input type="file" id="fileElem" accept="image/*" style="display:none" />
   <div
     class="box is-border-dashed is-no-shadow u-padding-24"
     style="--box-border-radius:var(--border-radius-xsmall);"
@@ -43,10 +34,17 @@ const { postId, imageUrl } = Astro.props;
           <span class="text">Choose a file</span>
         </button>
       </div>
-      <ul class="upload-file-box-list u-min-width-0" id="file-details-area" style="display: none">
+      <ul
+        class="upload-file-box-list u-min-width-0"
+        id="file-details-area"
+        style="display: none"
+      >
         <li class="u-flex u-cross-center u-min-width-0">
           <span class="icon-document" aria-hidden="true"></span>
-          <span class="upload-file-box-name u-trim u-min-width-0" id="file-name">
+          <span
+            class="upload-file-box-name u-trim u-min-width-0"
+            id="file-name"
+          >
           </span>
           <span
             class="upload-file-box-size u-margin-inline-start-4 u-margin-inline-end-16"
@@ -60,37 +58,40 @@ const { postId, imageUrl } = Astro.props;
 </appwrite-upload-file>
 
 <script>
-  import { storage } from "../lib/appwrite";
+  import { appwriteStorage } from "../lib/appwrite";
   import { ID } from "appwrite";
 
   const uploadHandler = async (file: any) => {
-        const myStorage = await storage();
-        let elm: any = document.getElementById("banner-image-id");
-        let imgLoader: any = document.getElementById("upload-image-icon");
-        let fileDetailsArea: any = document.getElementById("file-details-area");
-        let fileName: any = document.getElementById("file-name");
-        let fileSize: any = document.getElementById("file-size");
-        elm.value = "";
+    let elm: any = document.getElementById("banner-image-id");
+    let imgLoader: any = document.getElementById("upload-image-icon");
+    let fileDetailsArea: any = document.getElementById("file-details-area");
+    let fileName: any = document.getElementById("file-name");
+    let fileSize: any = document.getElementById("file-size");
+    elm.value = "";
 
-        try {
-          imgLoader.classList.add("loader");
-      
-          const result = await myStorage.createFile(
-            import.meta.env.PUBLIC_APPWRITE_BUCKET_ID,
-            ID.unique(),
-            file
-          );
-          console.log("result", result)
-          fileDetailsArea.style.display = "block"
-          fileName.innerText = result.name
-          fileSize.innerText = (result.sizeOriginal / 1024).toFixed(2) + " KB"
-          elm.value = `https://demo.appwrite.io/v1/storage/buckets/image-for-astro/files/${result.$id}/view?project=6062f9c2c09ce`;
-        } catch (err) {
-          alert("failed to upload");
-        } finally {
-          imgLoader.classList.remove("loader")
-        }
-      };
+    try {
+      imgLoader.classList.add("loader");
+
+      const result = await appwriteStorage.createFile(
+        import.meta.env.PUBLIC_APPWRITE_BUCKET_ID,
+        ID.unique(),
+        file
+      );
+      console.log("result", result);
+      fileDetailsArea.style.display = "block";
+      fileName.innerText = result.name;
+      fileSize.innerText = (result.sizeOriginal / 1024).toFixed(2) + " KB";
+      elm.value = `${
+        import.meta.env.PUBLIC_APPWRITE_ENDPOINT
+      }/storage/buckets/${import.meta.env.PUBLIC_APPWRITE_BUCKET_ID}/files/${
+        result.$id
+      }/view?project=${import.meta.env.PUBLIC_APPWRITE_PROJECT_ID}`;
+    } catch (err) {
+      alert(err);
+    } finally {
+      imgLoader.classList.remove("loader");
+    }
+  };
 
   class AppwriteUploadFile extends HTMLElement {
     postId: string | undefined;
