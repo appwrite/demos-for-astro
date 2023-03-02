@@ -4,37 +4,10 @@ import Header from "../../components/Header.astro";
 import SideNav from "../../components/SideNav.astro";
 import Footer from "../../components/Footer.astro";
 import UploadFile from "../../components/UploadFile.astro";
+
+const { imageUrl, isImageUploading } = Astro.props;
 ---
-
-<script>
-  import { ID } from "appwrite";
-  import type { AppwriteException } from "appwrite";
-  import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
-
-  import { dateForDateTimeInputValue } from "../../lib/utilities";
-  const form: HTMLFormElement | null = document.querySelector("form");
-  if (!form) {
-    alert("Missing Form");
-  } else {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const formData = new FormData(form);
-      try {
-        const post = await appwriteDatabases.createDocument(
-          import.meta.env.PUBLIC_APPWRITE_DB_ID,
-          import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
-          ID.unique(),
-          Object.fromEntries(formData)
-        );
-        window.location.replace(`/blog/edit?id=${post.$id}`);
-      } catch (error) {
-        const appwriteError = error as AppwriteException;
-        alert(appwriteError.message);
-      }
-    });
-  }
-</script>
-
+<appwrite-create-blog/>
 <html lang="en">
   <head>
     <BaseHead title="Edit" description="Edit Post" />
@@ -56,8 +29,9 @@ import UploadFile from "../../components/UploadFile.astro";
               <li class="form-item">
                 <label class="label">Title</label>
                 <input name="title" type="text" class="input-text" required />
+                <input name="imageurl" style="display: none" id="banner-image-id" type="text"/>
               </li>
-              <UploadFile/>
+              <UploadFile />
               <li class="form-item u-flex u-flex-vertical">
                 <label class="label">Date</label>
                 <input
@@ -85,3 +59,50 @@ import UploadFile from "../../components/UploadFile.astro";
     </div>
   </body>
 </html>
+<appwrite-create-blog/>
+
+<script>
+  import { ID } from "appwrite";
+  import type { AppwriteException } from "appwrite";
+  import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
+  import { atom, WritableAtom } from 'nanostores';
+
+  const imageUrl:any = atom("");
+  const isImageUploading:any = atom(true);
+
+  const form: HTMLFormElement | null = document.querySelector("form");
+
+  if (!form) {
+    alert("Missing Form");
+  } else {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      try {
+        const post = await appwriteDatabases.createDocument(
+          import.meta.env.PUBLIC_APPWRITE_DB_ID,
+          import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
+          ID.unique(),
+          Object.fromEntries(formData)
+        );
+        window.location.replace(`/blog/edit?id=${post.$id}`);
+      } catch (error) {
+        const appwriteError = error as AppwriteException;
+        alert(appwriteError.message);
+      }
+    });
+  }
+
+
+
+  class AppwriteCreateBlog extends HTMLElement {
+    imageUrl: string | undefined;
+    isImageUploading: Boolean;
+    constructor() {
+      super();
+      this.imageUrl = imageUrl;
+      this.isImageUploading = isImageUploading
+    }
+  }
+  customElements.define("appwrite-create-blog", AppwriteCreateBlog);
+</script>

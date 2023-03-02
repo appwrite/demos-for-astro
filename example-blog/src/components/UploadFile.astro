@@ -1,60 +1,123 @@
 ---
-import type { BlogPost } from "../lib/appwrite";
-
 interface Props {
-  postId ?: string;
+  postId?: string;
+  bannerId?: any;
+  imageUrl?: string;
 }
-const { postId } = Astro.props;
+const { postId, imageUrl } = Astro.props;
 ---
-<appwrite-upload-file data-postid={postId} >
-<input type="file" id="fileElem" accept="image/*" onchange="handleFiles(this.files)" style="display:none">   
-<div
-  class="box is-border-dashed is-no-shadow u-padding-24"
-  style="--box-border-radius:var(--border-radius-xsmall);"
+
+<appwrite-upload-file
+  data-postid={postId}
+  data-imageurl={imageUrl}
 >
-  <div class="upload-file-box">
-    <div class="upload-file-box-image"><span class="icon-upload" aria-hidden="true"></span></div>
-    <div class="u-min-width-0 u-text-center">
-      <h5 class="upload-file-box-title heading-level-7 u-inline">
-        <span class="is-only-desktop">Drag and drop files here to upload</span>
-        <span class="is-not-desktop">Upload a File</span>
-      </h5>
-    </div>
-    <div class="u-flex u-main-center u-cross-center u-gap-16 u-flex-vertical-mobile">
-      <p class="upload-file-box-info body-text-2 u-normal">Max file size: 10MB</p>
-      <button type = "button" class="button is-secondary is-full-width-mobile">
-        <span class="text">Choose a file</span>
-      </button>
+  <input
+    type="file"
+    id="fileElem"
+    accept="image/*"
+    onchange="handleFiles(this.files)"
+    style="display:none"
+  />
+  <div
+    class="box is-border-dashed is-no-shadow u-padding-24"
+    style="--box-border-radius:var(--border-radius-xsmall);"
+  >
+    <div class="upload-file-box">
+      <div class="upload-file-box-image" id="upload-image-icon">
+        <span class="icon-upload" aria-hidden="true"></span>
+      </div>
+      <div class="u-min-width-0 u-text-center">
+        <h5 class="upload-file-box-title heading-level-7 u-inline">
+          <span class="is-only-desktop">Drag and drop files here to upload</span
+          >
+          <span class="is-not-desktop">Upload a File</span>
+        </h5>
+      </div>
+      <div
+        class="u-flex u-main-center u-cross-center u-gap-16 u-flex-vertical-mobile"
+      >
+        <p class="upload-file-box-info body-text-2 u-normal">
+          Max file size: 10MB
+        </p>
+        <button type="button" class="button is-secondary is-full-width-mobile">
+          <span class="text">Choose a file</span>
+        </button>
+      </div>
+      <ul class="upload-file-box-list u-min-width-0" id="file-details-area" style="display: none">
+        <li class="u-flex u-cross-center u-min-width-0">
+          <span class="icon-document" aria-hidden="true"></span>
+          <span class="upload-file-box-name u-trim u-min-width-0" id="file-name">
+          </span>
+          <span
+            class="upload-file-box-size u-margin-inline-start-4 u-margin-inline-end-16"
+            id="file-size"
+          >
+          </span>
+        </li>
+      </ul>
     </div>
   </div>
-</div>
 </appwrite-upload-file>
-<script>
-    class AppwriteUploadFile extends HTMLElement{
-        postId:string |undefined
-        constructor() {
-      super();
 
+<script>
+  import { storage } from "../lib/appwrite";
+  import { ID } from "appwrite";
+
+  const uploadHandler = async (file: any) => {
+        const myStorage = await storage();
+        let elm: any = document.getElementById("banner-image-id");
+        let imgLoader: any = document.getElementById("upload-image-icon");
+        let fileDetailsArea: any = document.getElementById("file-details-area");
+        let fileName: any = document.getElementById("file-name");
+        let fileSize: any = document.getElementById("file-size");
+        elm.value = "";
+
+        try {
+          imgLoader.classList.add("loader");
+      
+          const result = await myStorage.createFile(
+            import.meta.env.PUBLIC_APPWRITE_BUCKET_ID,
+            ID.unique(),
+            file
+          );
+          console.log("result", result)
+          fileDetailsArea.style.display = "block"
+          fileName.innerText = result.name
+          fileSize.innerText = (result.sizeOriginal / 1024).toFixed(2) + " KB"
+          elm.value = `https://demo.appwrite.io/v1/storage/buckets/image-for-astro/files/${result.$id}/view?project=6062f9c2c09ce`;
+        } catch (err) {
+          alert("failed to upload");
+        } finally {
+          imgLoader.classList.remove("loader")
+        }
+      };
+
+  class AppwriteUploadFile extends HTMLElement {
+    postId: string | undefined;
+    isImageUploading: any;
+    constructor() {
+      super();
       this.postId = this.dataset.postid;
+
       const btnElem: HTMLButtonElement | null = this.querySelector("button");
       const fileInputElem: HTMLInputElement | null =
-          this.querySelector("input");
+        this.querySelector("input");
       if (!btnElem) return;
+
       btnElem.addEventListener("click", async (e) => {
         e.preventDefault();
-        
-        if (fileInputElem)
-        {
-            fileInputElem.click()
+        if (fileInputElem) {
+          fileInputElem.click();
         }
-      }
-        )
-        fileInputElem?.addEventListener("change", async (e) => {
-            console.log(e.currentTarget?.files)
-       
-        })
+      });
 
+      fileInputElem?.addEventListener("change", async (e: any) => {
+        console.log(e.currentTarget?.files);
+        if (e?.currentTarget?.files?.length) {
+          uploadHandler(e?.currentTarget?.files[0]);
+        }
+      });
     }
-    }
-    customElements.define ("appwrite-upload-file",AppwriteUploadFile)
+  }
+  customElements.define("appwrite-upload-file", AppwriteUploadFile);
 </script>

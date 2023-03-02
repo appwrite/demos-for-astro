@@ -1,4 +1,4 @@
-import { Account, AppwriteException, Client, Databases, ID, Models } from 'appwrite';
+import { Account, AppwriteException, Client, Databases, Storage, ID, Models } from 'appwrite';
 import { atom, WritableAtom } from 'nanostores';
 
 /** Setup */
@@ -89,4 +89,9 @@ export const account = async () => {
         const appwriteError = error as AppwriteException;
         alert(appwriteError.message)
     }
+}
+
+export const storage = () => {
+    const storage = new Storage(appwriteClient);
+    return storage
 }
