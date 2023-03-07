@@ -1,10 +1,13 @@
-import { Account, AppwriteException, Client, Databases, ID, Models } from 'appwrite';
+import { Account, AppwriteException, Client, Databases, Storage, ID, Models } from 'appwrite';
 import { atom, WritableAtom } from 'nanostores';
 
 /** Setup */
 export const appwriteClient = new Client()
     .setEndpoint(import.meta.env.PUBLIC_APPWRITE_ENDPOINT) // Your API Endpoint
     .setProject(import.meta.env.PUBLIC_APPWRITE_PROJECT_ID); // Your project ID
+
+export const appwriteDatabases = new Databases(appwriteClient);
+export const appwriteStorage = new Storage(appwriteClient);
 
 /** Database */
 export interface BlogPost extends Models.Document {
@@ -13,7 +16,7 @@ export interface BlogPost extends Models.Document {
     description: string;
     content: string;
     slug: string;
-    cover: string;
+    imageurl: string;
 }
 export interface BlogPostList extends Models.DocumentList<BlogPost> { }
 
@@ -22,8 +25,6 @@ export interface BlogComment extends Models.Document {
     comment: string;
 }
 export interface BlogCommentList extends Models.DocumentList<BlogComment> { }
-
-export const appwriteDatabases = new Databases(appwriteClient);
 
 /** Account */
 export const appwriteAccount = new Account(appwriteClient);

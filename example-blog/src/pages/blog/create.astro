@@ -3,37 +3,10 @@ import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import SideNav from "../../components/SideNav.astro";
 import Footer from "../../components/Footer.astro";
+import UploadFile from "../../components/UploadFile.astro";
 ---
 
-<script>
-  import { ID } from "appwrite";
-  import type { AppwriteException } from "appwrite";
-  import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
-
-  import { dateForDateTimeInputValue } from "../../lib/utilities";
-  const form: HTMLFormElement | null = document.querySelector("form");
-  if (!form) {
-    alert("Missing Form");
-  } else {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const formData = new FormData(form);
-      try {
-        const post = await appwriteDatabases.createDocument(
-          import.meta.env.PUBLIC_APPWRITE_DB_ID,
-          import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
-          ID.unique(),
-          Object.fromEntries(formData)
-        );
-        window.location.replace(`/blog/edit?id=${post.$id}`);
-      } catch (error) {
-        const appwriteError = error as AppwriteException;
-        alert(appwriteError.message);
-      }
-    });
-  }
-</script>
-
+<appwrite-create-blog></appwrite-create-blog>
 <html lang="en">
   <head>
     <BaseHead title="Edit" description="Edit Post" />
@@ -56,6 +29,7 @@ import Footer from "../../components/Footer.astro";
                 <label class="label">Title</label>
                 <input name="title" type="text" class="input-text" required />
               </li>
+              <UploadFile />
               <li class="form-item u-flex u-flex-vertical">
                 <label class="label">Date</label>
                 <input
@@ -83,3 +57,35 @@ import Footer from "../../components/Footer.astro";
     </div>
   </body>
 </html>
+
+<script>
+  import { ID } from "appwrite";
+  import type { AppwriteException } from "appwrite";
+  import { appwriteDatabases } from "../../lib/appwrite";
+
+  const form: HTMLFormElement | null = document.querySelector("form");
+
+  if (!form) {
+    alert("Missing Form");
+  } else {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      try {
+        const post = await appwriteDatabases.createDocument(
+          import.meta.env.PUBLIC_APPWRITE_DB_ID,
+          import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
+          ID.unique(),
+          {
+            ...Object.fromEntries(formData),
+            imageurl: undefined,
+          }
+        );
+        window.location.replace(`/blog`);
+      } catch (error) {
+        const appwriteError = error as AppwriteException;
+        alert(appwriteError.message);
+      }
+    });
+  }
+</script>
