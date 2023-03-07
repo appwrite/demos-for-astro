@@ -62,6 +62,15 @@
                     "array": false,
                     "size": 255,
                     "default": null
+                },
+                {
+                    "key": "imageurl",
+                    "type": "string",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
                 }
             ],
             "indexes": [
