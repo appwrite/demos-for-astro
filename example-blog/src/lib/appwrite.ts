@@ -16,7 +16,7 @@ export interface BlogPost extends Models.Document {
     description: string;
     content: string;
     slug: string;
-    cover: string;
+    imageurl: string;
 }
 export interface BlogPostList extends Models.DocumentList<BlogPost> { }
 

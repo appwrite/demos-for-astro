@@ -28,6 +28,14 @@ import UploadFile from "../../components/UploadFile.astro";
     if (!post) {
       alert("ID not found for this document.");
     } else {
+      // Update data elements for upload
+      const appwriteUploadFileElem: HTMLElement | null = document.querySelector(
+        "appwrite-upload-file"
+      );
+      post.$id && appwriteUploadFileElem?.setAttribute("data-postid", post.$id);
+      post.imageurl &&
+        appwriteUploadFileElem?.setAttribute("data-imageurl", post.imageurl);
+
       const form: HTMLFormElement | null = document.querySelector("form");
       if (!form) {
         alert("Missing Form");
@@ -61,7 +69,7 @@ import UploadFile from "../../components/UploadFile.astro";
               id,
               Object.fromEntries(formData)
             );
-            alert("Updated.");
+            window.location.replace(`/blog/${post.slug}`);
           } catch (error) {
             const appwriteError = error as AppwriteException;
             alert(appwriteError.message);
@@ -90,6 +98,7 @@ import UploadFile from "../../components/UploadFile.astro";
                 <label class="label">Title</label>
                 <input name="title" type="text" class="input-text" />
               </li>
+              <UploadFile />
               <li class="form-item u-flex u-flex-vertical">
                 <label class="label">Date</label>
                 <input
@@ -103,7 +112,6 @@ import UploadFile from "../../components/UploadFile.astro";
                 <label class="label">Description</label>
                 <input name="description" type="text" class="input-text" />
               </li>
-
               <li class="form-item">
                 <label class="label">Content</label>
                 <textarea name="content" class="input-text"></textarea>

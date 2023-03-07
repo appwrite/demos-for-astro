@@ -32,7 +32,7 @@ const { $id, $updatedAt, date, title, content, description, cover, imageurl } =
       <main class="main-content">
         <article class="container">
           {
-            imageurl.length > 0 ? (
+            imageurl?.length > 0 ? (
               <img width={720} src={imageurl} alt="" />
             ) : null
           }

@@ -4,10 +4,9 @@ import Header from "../../components/Header.astro";
 import SideNav from "../../components/SideNav.astro";
 import Footer from "../../components/Footer.astro";
 import UploadFile from "../../components/UploadFile.astro";
-
-const { imageUrl, isImageUploading } = Astro.props;
 ---
-<appwrite-create-blog/>
+
+<appwrite-create-blog></appwrite-create-blog>
 <html lang="en">
   <head>
     <BaseHead title="Edit" description="Edit Post" />
@@ -22,14 +21,13 @@ const { imageUrl, isImageUploading } = Astro.props;
             class="form u-width-full-line u-max-width-500 u-flex u-flex-vertical u-gap-16"
           >
             <ul class="form-list">
-              <li class="form-item"> 
+              <li class="form-item">
                 <label class="label">Slug</label>
                 <input name="slug" type="text" class="input-text" required />
               </li>
               <li class="form-item">
                 <label class="label">Title</label>
                 <input name="title" type="text" class="input-text" required />
-                <input name="imageurl" style="display: none" id="banner-image-id" type="text"/>
               </li>
               <UploadFile />
               <li class="form-item u-flex u-flex-vertical">
@@ -59,16 +57,11 @@ const { imageUrl, isImageUploading } = Astro.props;
     </div>
   </body>
 </html>
-<appwrite-create-blog/>
 
 <script>
   import { ID } from "appwrite";
   import type { AppwriteException } from "appwrite";
-  import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
-  import { atom, WritableAtom } from 'nanostores';
-
-  const imageUrl:any = atom("");
-  const isImageUploading:any = atom(true);
+  import { appwriteDatabases } from "../../lib/appwrite";
 
   const form: HTMLFormElement | null = document.querySelector("form");
 
@@ -83,26 +76,16 @@ const { imageUrl, isImageUploading } = Astro.props;
           import.meta.env.PUBLIC_APPWRITE_DB_ID,
           import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
           ID.unique(),
-          Object.fromEntries(formData)
+          {
+            ...Object.fromEntries(formData),
+            imageurl: undefined,
+          }
         );
-        window.location.replace(`/blog/edit?id=${post.$id}`);
+        window.location.replace(`/blog`);
       } catch (error) {
         const appwriteError = error as AppwriteException;
         alert(appwriteError.message);
       }
     });
   }
-
-
-
-  class AppwriteCreateBlog extends HTMLElement {
-    imageUrl: string | undefined;
-    isImageUploading: Boolean;
-    constructor() {
-      super();
-      this.imageUrl = imageUrl;
-      this.isImageUploading = isImageUploading
-    }
-  }
-  customElements.define("appwrite-create-blog", AppwriteCreateBlog);
 </script>
