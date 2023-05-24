@@ -1,0 +1,22 @@
+{
+  "name": "blog",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@appwrite.io/pink": "^0.0.6",
+    "@astrojs/mdx": "^0.19.4",
+    "@astrojs/rss": "^2.4.3",
+    "@astrojs/sitemap": "^1.3.1",
+    "@astrojs/vercel": "^3.4.0",
+    "appwrite": "^11.0.0",
+    "astro": "^2.5.5",
+    "nanostores": "^0.8.1"
+  }
+}

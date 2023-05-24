@@ -18,9 +18,7 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
       const accountUserDetailElem: HTMLElement | null =
         document.querySelector("#accountUserDetail");
       if (accountUserDetailElem)
-        accountUserDetailElem.innerHTML = `Email: ${user.email} Admin: ${
-          user.prefs.admin || false
-        }`;
+        accountUserDetailElem.innerHTML = `Email: ${user.email}`;
     } else {
       loginElem.style.display = "block";
       userElem.style.display = "none";

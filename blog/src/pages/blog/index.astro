@@ -3,15 +3,13 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 import { appwriteDatabases, BlogPostList } from "../../lib/appwrite";
 import AdminButtons from "../../components/AdminButtons.astro";
 import AdminCreate from "../../components/AdminCreate.astro";
+import { Query } from "appwrite";
 
-const entries = (await appwriteDatabases.listDocuments(
+const { documents: posts } = (await appwriteDatabases.listDocuments(
   import.meta.env.PUBLIC_APPWRITE_DB_ID,
-  import.meta.env.PUBLIC_APPWRITE_BLOG_ID
+  import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
+  [Query.orderDesc("$createdAt")]
 )) as BlogPostList;
-
-const posts = entries.documents.sort(
-  (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
-);
 ---
 
 <SiteLayout>
@@ -26,8 +24,8 @@ const posts = entries.documents.sort(
           <li class="list-item u-position-relative">
             <span class="icon-arrow-circle-right" aria-hidden="true" />
 
-            <time datetime={post.date}>
-              {new Date(post.date).toLocaleDateString("en-us", {
+            <time datetime={post.$$createdAt}>
+              {new Date(post.$createAt).toLocaleDateString("en-us", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",

@@ -74,7 +74,7 @@ import UploadFile from "../../components/UploadFile.astro";
       try {
         const post = await appwriteDatabases.createDocument(
           import.meta.env.PUBLIC_APPWRITE_DB_ID,
-          import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
+          import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
           ID.unique(),
           {
             ...Object.fromEntries(formData),

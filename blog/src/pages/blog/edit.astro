@@ -21,7 +21,7 @@ import UploadFile from "../../components/UploadFile.astro";
   } else {
     const post = (await appwriteDatabases.getDocument(
       import.meta.env.PUBLIC_APPWRITE_DB_ID,
-      import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
+      import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
       id
     )) as BlogPost;
 
@@ -65,7 +65,7 @@ import UploadFile from "../../components/UploadFile.astro";
           try {
             await appwriteDatabases.updateDocument(
               import.meta.env.PUBLIC_APPWRITE_DB_ID,
-              import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
+              import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
               id,
               Object.fromEntries(formData)
             );

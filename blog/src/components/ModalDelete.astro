@@ -68,7 +68,7 @@ const post: BlogPost = JSON.parse(poststring);
           try {
             await appwriteDatabases.deleteDocument(
               import.meta.env.PUBLIC_APPWRITE_DB_ID,
-              import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
+              import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
               modalDeleteDialogElem.returnValue
             );
             window.location.replace(`/blog`);

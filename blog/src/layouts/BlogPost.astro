@@ -1,5 +1,5 @@
 ---
-import type { CollectionEntry } from "astro:content";
+
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import SideNav from "../components/SideNav.astro";
@@ -11,7 +11,7 @@ import type { BlogPost as BlogPostType } from "../lib/appwrite";
 type Props = BlogPostType;
 
 const post = Astro.props;
-const { $id, $updatedAt, date, title, content, description, cover, imageurl } =
+const { $id, $updatedAt, $createdAt, title, content, description, imageurl } =
   post;
 ---
 
@@ -41,7 +41,7 @@ const { $id, $updatedAt, date, title, content, description, cover, imageurl } =
             <AdminButtons poststring={JSON.stringify(post)} />
           </h1>
           <div style="display:flex; gap: .5rem">
-            {date && <time>{new Date(date).toLocaleDateString()}</time>}
+            {$createdAt && <time>{new Date($createdAt).toLocaleDateString()}</time>}
             {
               $updatedAt && (
                 <div>
