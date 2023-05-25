@@ -1,5 +1,5 @@
 <appwrite-upload-file data-postid={""} data-imageurl={""}>
-  <input type="file" id="fileElem" accept="image/*" style="display:none" />
+  <input type="file" id="file" accept="image/*" style="display:none" />
   <input
     name="imageurl"
     style="display: none"
@@ -70,16 +70,21 @@
     postId: string | undefined;
     imageURL: string | undefined;
     isImageUploading: any;
-    imageInputElement: HTMLInputElement | null = this.querySelector("#imageurl-input");
-    imageLoaderElement: HTMLDivElement | null = this.querySelector("#upload-image-icon");
+    imageInputElement: HTMLInputElement | null =
+      this.querySelector("#imageurl-input");
+    imageLoaderElement: HTMLDivElement | null =
+      this.querySelector("#upload-image-icon");
     fileDetailsAreaElement: HTMLUListElement | null =
       this.querySelector("#file-details-area");
     fileNameElement: HTMLSpanElement | null = this.querySelector("#file-name");
     fileSizeElement: HTMLSpanElement | null = this.querySelector("#file-size");
-    uploadButtonElement: HTMLButtonElement | null = this.querySelector("#upload-button");
-    fileInputElement: HTMLInputElement | null = this.querySelector("#fileElem");
-    uploadSectionElement: HTMLElement | null = this.querySelector("#upload-section");
-    previewSectionElement: HTMLElement | null = this.querySelector("#preview-section");
+    uploadButtonElement: HTMLButtonElement | null =
+      this.querySelector("#upload-button");
+    fileInputElement: HTMLInputElement | null = this.querySelector("#file");
+    uploadSectionElement: HTMLElement | null =
+      this.querySelector("#upload-section");
+    previewSectionElement: HTMLElement | null =
+      this.querySelector("#preview-section");
 
     // Used when editing, the data is set async
     observer = new MutationObserver((mutationList, observer) => {
