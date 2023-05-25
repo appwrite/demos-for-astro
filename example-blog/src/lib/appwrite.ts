@@ -29,7 +29,7 @@ export interface BlogPostList extends Models.DocumentList<BlogPost> {}
 
 export interface BlogComment extends Models.Document {
   postId: string;
-  comment: string;
+  content: string;
 }
 export interface BlogCommentList extends Models.DocumentList<BlogComment> {}
 

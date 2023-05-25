@@ -5,11 +5,15 @@ import AdminButtons from "../../components/AdminButtons.astro";
 import AdminCreate from "../../components/AdminCreate.astro";
 import { Query } from "appwrite";
 
+console.log(import.meta.env.PUBLIC_APPWRITE_POSTS_ID);
+
 const { documents: posts } = (await appwriteDatabases.listDocuments(
   import.meta.env.PUBLIC_APPWRITE_DB_ID,
   import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
   [Query.orderDesc("$createdAt")]
 )) as BlogPostList;
+
+console.log(posts);
 ---
 
 <SiteLayout>
@@ -25,13 +29,13 @@ const { documents: posts } = (await appwriteDatabases.listDocuments(
             <span class="icon-arrow-circle-right" aria-hidden="true" />
 
             <time datetime={post.$$createdAt}>
-              {new Date(post.$createAt).toLocaleDateString("en-us", {
+              {new Date(post.$createdAt).toLocaleDateString("en-us", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
               })}
             </time>
-            <a href={`/blog/${post.slug}/`} style="text-decoration: underline;">
+            <a href={`/posts/${post.slug}/`} style="text-decoration: underline;">
               {post.title}
             </a>
             <AdminButtons poststring={JSON.stringify(post)} />

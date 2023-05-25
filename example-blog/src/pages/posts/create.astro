@@ -81,7 +81,7 @@ import UploadFile from "../../components/UploadFile.astro";
             imageurl: undefined,
           }
         );
-        window.location.replace(`/blog`);
+        window.location.replace(`/posts`);
       } catch (error) {
         const appwriteError = error as AppwriteException;
         alert(appwriteError.message);

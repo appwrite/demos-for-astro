@@ -11,7 +11,7 @@ const { postId } = Astro.props;
       <ul class="form-list">
         <li class="form-item">
           <label class="label">Comments</label>
-          <input name="comment" type="text" class="input-text" />
+          <input name="content" type="text" class="input-text" />
         </li>
       </ul>
       <button class="button u-cross-child-end" type="submit">Add Comment</button
@@ -27,7 +27,6 @@ const { postId } = Astro.props;
     appwriteClient,
     appwriteDatabases,
     BlogComment,
-    BlogCommentList,
     user$,
   } from "../lib/appwrite";
 
@@ -70,10 +69,11 @@ const { postId } = Astro.props;
       formElem.addEventListener("submit", async (e) => {
         e.preventDefault();
         const commentInputElem: HTMLInputElement | null =
-          formElem.querySelector('input[name="comment"]');
+          formElem.querySelector('input[name="content"]');
         if (commentInputElem) {
           const formData = new FormData(formElem);
           try {
+            console.log(Object.fromEntries(formData))
             await appwriteDatabases.createDocument(
               this.databaseId,
               this.collectionId,
@@ -112,7 +112,7 @@ const { postId } = Astro.props;
           commentEvent.map((c) => {
             const commentItem = `<li class="list-item" data-postid="${c?.$id}">
           <span class="icon-chat" aria-hidden="true"></span>
-          <span class="text">${c?.comment}</span>
+          <span class="text">${c?.content}</span>
         </li>`;
             commentsElem.insertAdjacentHTML("beforeend", commentItem);
           });

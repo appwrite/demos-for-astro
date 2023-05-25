@@ -69,7 +69,7 @@ import UploadFile from "../../components/UploadFile.astro";
               id,
               Object.fromEntries(formData)
             );
-            window.location.replace(`/blog/${post.slug}`);
+            window.location.replace(`/posts/${post.slug}`);
           } catch (error) {
             const appwriteError = error as AppwriteException;
             alert(appwriteError.message);
