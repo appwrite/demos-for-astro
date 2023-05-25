@@ -1,5 +1,4 @@
 ---
-
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import SideNav from "../components/SideNav.astro";
@@ -41,7 +40,11 @@ const { $id, $updatedAt, $createdAt, title, content, description, imageurl } =
             <AdminButtons poststring={JSON.stringify(post)} />
           </h1>
           <div style="display:flex; gap: .5rem">
-            {$createdAt && <time>{new Date($createdAt).toLocaleDateString()}</time>}
+            {
+              $createdAt && (
+                <time>{new Date($createdAt).toLocaleDateString()}</time>
+              )
+            }
             {
               $updatedAt && (
                 <div>

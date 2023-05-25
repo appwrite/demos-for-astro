@@ -73,7 +73,7 @@ const { postId } = Astro.props;
         if (commentInputElem) {
           const formData = new FormData(formElem);
           try {
-            console.log(Object.fromEntries(formData))
+            console.log(Object.fromEntries(formData));
             await appwriteDatabases.createDocument(
               this.databaseId,
               this.collectionId,
