@@ -2,21 +2,21 @@
   // Check if user has session
   import { isLoggedIn } from "../lib/appwrite";
 
-  const loginElem: HTMLElement | null = document.querySelector(
+  const loginElement: HTMLElement | null = document.querySelector(
     "#header-account-user"
   );
-  const accountElem: HTMLElement | null = document.querySelector(
+  const accountElement: HTMLElement | null = document.querySelector(
     "#header-account-login"
   );
 
   isLoggedIn.subscribe((user) => {
-    if (!accountElem || !loginElem) return;
+    if (!accountElement || !loginElement) return;
     if (user) {
-      loginElem.style.display = "none";
-      accountElem.style.display = "block";
+      loginElement.style.display = "none";
+      accountElement.style.display = "block";
     } else {
-      loginElem.style.display = "block";
-      accountElem.style.display = "none";
+      loginElement.style.display = "block";
+      accountElement.style.display = "none";
     }
   });
 </script>

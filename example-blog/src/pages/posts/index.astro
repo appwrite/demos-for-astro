@@ -17,7 +17,7 @@ console.log(posts);
 ---
 
 <SiteLayout>
-  <section class="container">
+  <section class="u-flex u-flex-vertical u-gap-4">
     <section class="u-position-relative">
       <AdminCreate />
     </section>
@@ -35,7 +35,10 @@ console.log(posts);
                 day: "numeric",
               })}
             </time>
-            <a href={`/posts/${post.slug}/`} style="text-decoration: underline;">
+            <a
+              href={`/posts/${post.slug}/`}
+              style="text-decoration: underline;"
+            >
               {post.title}
             </a>
             <AdminButtons poststring={JSON.stringify(post)} />

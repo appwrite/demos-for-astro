@@ -3,10 +3,10 @@ import HeaderAccount from "../components/HeaderAccount.astro";
 ---
 
 <script>
-  const btnLightElem: HTMLButtonElement | null = document.querySelector(
+  const lightThemeButton: HTMLButtonElement | null = document.querySelector(
     "#theme-toggle-light"
   );
-  const btnDarkElem: HTMLButtonElement | null =
+  const darkThemeButton: HTMLButtonElement | null =
     document.querySelector("#theme-toggle-dark");
 
   function setTheme() {
@@ -14,17 +14,17 @@ import HeaderAccount from "../components/HeaderAccount.astro";
     const theme =
       localStorage.getItem("theme") ??
       (defaultTheme.matches ? "dark" : "light");
-    if (btnLightElem && btnDarkElem) {
+    if (lightThemeButton && darkThemeButton) {
       if (theme === "dark") {
         document.body.classList.remove("theme-light");
         document.body.classList.add("theme-dark");
-        btnLightElem.style.display = "none";
-        btnDarkElem.style.display = "block";
+        lightThemeButton.style.display = "none";
+        darkThemeButton.style.display = "block";
       } else {
         document.body.classList.remove("theme-dark");
         document.body.classList.add("theme-light");
-        btnLightElem.style.display = "block";
-        btnDarkElem.style.display = "none";
+        lightThemeButton.style.display = "block";
+        darkThemeButton.style.display = "none";
       }
     }
   }
@@ -39,28 +39,28 @@ import HeaderAccount from "../components/HeaderAccount.astro";
       document.body.classList.remove("theme-dark");
       document.body.classList.add("theme-light");
 
-      if (btnLightElem && btnDarkElem) {
-        btnLightElem.style.display = "block";
-        btnDarkElem.style.display = "none";
+      if (lightThemeButton && darkThemeButton) {
+        lightThemeButton.style.display = "block";
+        darkThemeButton.style.display = "none";
       }
     } else {
       localStorage.setItem("theme", "dark");
       document.body.classList.remove("theme-light");
       document.body.classList.add("theme-dark");
-      if (btnLightElem && btnDarkElem) {
-        btnLightElem.style.display = "none";
-        btnDarkElem.style.display = "block";
+      if (lightThemeButton && darkThemeButton) {
+        lightThemeButton.style.display = "none";
+        darkThemeButton.style.display = "block";
       }
     }
   }
 
   //Check for theme on load
-  if (btnLightElem && btnDarkElem) {
+  if (lightThemeButton && darkThemeButton) {
     setTheme();
-    btnLightElem?.addEventListener("click", (e) => {
+    lightThemeButton?.addEventListener("click", (e) => {
       toggleTheme();
     });
-    btnDarkElem?.addEventListener("click", (e) => {
+    darkThemeButton?.addEventListener("click", (e) => {
       toggleTheme();
     });
   }

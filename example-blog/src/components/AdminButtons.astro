@@ -13,7 +13,7 @@ const post = JSON.parse(poststring);
 ---
 
 <section class="adminButtons" style="display: none">
-  <div style="display:flex; gap: 0.5rem">
+  <div class="u-flex u-gap-8">
     <ModalDelete poststring={poststring}>
       <span class="icon-trash" aria-hidden="true"></span>
       <span class="text">Delete</span>
@@ -34,16 +34,16 @@ const post = JSON.parse(poststring);
   import { user$ } from "../lib/appwrite";
 
   // This gets ALL buttons on the screen
-  const adminButtonsElem: NodeListOf<HTMLElement> | null =
+  const authorButtonsElement: NodeListOf<HTMLElement> | null =
     document.querySelectorAll(".adminButtons");
 
   // Show Buttons if user is an admin
   user$.subscribe((user) => {
-    if (!adminButtonsElem) return;
+    if (!authorButtonsElement) return;
     if (user && user.prefs.admin) {
-      Array.from(adminButtonsElem).map((b) => (b.style.display = "block"));
+      Array.from(authorButtonsElement).map((b) => (b.style.display = "block"));
     } else {
-      Array.from(adminButtonsElem).map((b) => (b.style.display = "none"));
+      Array.from(authorButtonsElement).map((b) => (b.style.display = "none"));
     }
   });
 </script>

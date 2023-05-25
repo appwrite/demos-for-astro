@@ -29,32 +29,27 @@ import UploadFile from "../../components/UploadFile.astro";
       alert("ID not found for this document.");
     } else {
       // Update data elements for upload
-      const appwriteUploadFileElem: HTMLElement | null = document.querySelector(
+      const uploadFileElement: HTMLElement | null = document.querySelector(
         "appwrite-upload-file"
       );
-      post.$id && appwriteUploadFileElem?.setAttribute("data-postid", post.$id);
+      post.$id && uploadFileElement?.setAttribute("data-postid", post.$id);
       post.imageurl &&
-        appwriteUploadFileElem?.setAttribute("data-imageurl", post.imageurl);
+        uploadFileElement?.setAttribute("data-imageurl", post.imageurl);
 
       const form: HTMLFormElement | null = document.querySelector("form");
       if (!form) {
         alert("Missing Form");
       } else {
         // Set form value from post
-        const title: HTMLInputElement | null =
+        const titleInputElement: HTMLInputElement | null =
           form.querySelector('[name="title"]');
-        const date: HTMLInputElement | null =
-          form.querySelector('[name="date"]');
         const description: HTMLInputElement | null = form.querySelector(
           '[name="description"]'
         );
         const content: HTMLInputElement | null =
           form.querySelector('[name="content"]');
-        if (title && description && content && date) {
-          title.value = post?.title || "";
-          date.value = post?.date
-            ? dateForDateTimeInputValue(new Date(post.date))
-            : dateForDateTimeInputValue(new Date());
+        if (titleInputElement && description && content) {
+          titleInputElement.value = post?.title || "";
           description.value = post?.description || "";
           content.value = post?.content || "";
         }
@@ -99,15 +94,6 @@ import UploadFile from "../../components/UploadFile.astro";
                 <input name="title" type="text" class="input-text" />
               </li>
               <UploadFile />
-              <li class="form-item u-flex u-flex-vertical">
-                <label class="label">Date</label>
-                <input
-                  class="input-text"
-                  type="datetime-local"
-                  step="1"
-                  name="date"
-                />
-              </li>
               <li class="form-item">
                 <label class="label">Description</label>
                 <input name="description" type="text" class="input-text" />

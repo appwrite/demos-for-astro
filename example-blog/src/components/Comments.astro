@@ -20,6 +20,7 @@ const { postId } = Astro.props;
     <ul class="list"></ul>
   </div>
 </appwrite-post-comments>
+
 <script>
   import { AppwriteException, ID, Query } from "appwrite";
   import { atom, WritableAtom } from "nanostores";
@@ -61,17 +62,18 @@ const { postId } = Astro.props;
     }
 
     addCommentInput() {
-      const formElem: HTMLFormElement | null = this.querySelector("form");
-      const btnElem: HTMLButtonElement | null = this.querySelector("button");
+      const formElement: HTMLFormElement | null = this.querySelector("form");
+      const buttonElement: HTMLButtonElement | null =
+        this.querySelector("button");
 
-      if (!formElem || !btnElem) return;
+      if (!formElement || !buttonElement) return;
 
-      formElem.addEventListener("submit", async (e) => {
+      formElement.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const commentInputElem: HTMLInputElement | null =
-          formElem.querySelector('input[name="content"]');
-        if (commentInputElem) {
-          const formData = new FormData(formElem);
+        const commentInputElement: HTMLInputElement | null =
+          formElement.querySelector('input[name="content"]');
+        if (commentInputElement) {
+          const formData = new FormData(formElement);
           try {
             console.log(Object.fromEntries(formData));
             await appwriteDatabases.createDocument(
@@ -80,7 +82,7 @@ const { postId } = Astro.props;
               ID.unique(),
               { ...Object.fromEntries(formData), postId: this.postId }
             );
-            commentInputElem.value = "";
+            commentInputElement.value = "";
           } catch (error) {
             const appwriteError = error as AppwriteException;
             alert(appwriteError.message);
@@ -105,16 +107,16 @@ const { postId } = Astro.props;
 
     async subComments() {
       this.comments$.listen((commentEvent) => {
-        const commentsElem: HTMLUListElement | null =
+        const commentsElement: HTMLUListElement | null =
           this.querySelector(".list");
-        if (commentsElem) {
-          commentsElem.replaceChildren();
+        if (commentsElement) {
+          commentsElement.replaceChildren();
           commentEvent.map((c) => {
             const commentItem = `<li class="list-item" data-postid="${c?.$id}">
           <span class="icon-chat" aria-hidden="true"></span>
           <span class="text">${c?.content}</span>
         </li>`;
-            commentsElem.insertAdjacentHTML("beforeend", commentItem);
+            commentsElement.insertAdjacentHTML("beforeend", commentItem);
           });
         }
       });

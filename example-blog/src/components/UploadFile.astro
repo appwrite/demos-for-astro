@@ -70,16 +70,16 @@
     postId: string | undefined;
     imageURL: string | undefined;
     isImageUploading: any;
-    elm: HTMLInputElement | null = this.querySelector("#imageurl-input");
-    imgLoader: HTMLDivElement | null = this.querySelector("#upload-image-icon");
-    fileDetailsArea: HTMLUListElement | null =
+    imageInputElement: HTMLInputElement | null = this.querySelector("#imageurl-input");
+    imageLoaderElement: HTMLDivElement | null = this.querySelector("#upload-image-icon");
+    fileDetailsAreaElement: HTMLUListElement | null =
       this.querySelector("#file-details-area");
-    fileName: HTMLSpanElement | null = this.querySelector("#file-name");
-    fileSize: HTMLSpanElement | null = this.querySelector("#file-size");
-    btnElem: HTMLButtonElement | null = this.querySelector("#upload-button");
-    fileInputElem: HTMLInputElement | null = this.querySelector("#fileElem");
-    uploadSection: HTMLElement | null = this.querySelector("#upload-section");
-    previewSection: HTMLElement | null = this.querySelector("#preview-section");
+    fileNameElement: HTMLSpanElement | null = this.querySelector("#file-name");
+    fileSizeElement: HTMLSpanElement | null = this.querySelector("#file-size");
+    uploadButtonElement: HTMLButtonElement | null = this.querySelector("#upload-button");
+    fileInputElement: HTMLInputElement | null = this.querySelector("#fileElem");
+    uploadSectionElement: HTMLElement | null = this.querySelector("#upload-section");
+    previewSectionElement: HTMLElement | null = this.querySelector("#preview-section");
 
     // Used when editing, the data is set async
     observer = new MutationObserver((mutationList, observer) => {
@@ -88,17 +88,17 @@
           this.postId = this.dataset.postid;
           this.imageURL = this.dataset.imageurl;
           if (
-            this.elm &&
+            this.imageInputElement &&
             this.imageURL &&
-            this.previewSection &&
-            this.uploadSection
+            this.previewSectionElement &&
+            this.uploadSectionElement
           ) {
-            this.previewSection.innerHTML = "";
+            this.previewSectionElement.innerHTML = "";
 
-            this.elm.value = this.imageURL;
+            this.imageInputElement.value = this.imageURL;
             const imgElem = document.createElement("img");
             imgElem.src = this.imageURL;
-            this.previewSection.appendChild(imgElem);
+            this.previewSectionElement.appendChild(imgElem);
             const removeButtonElem = document.createElement("button");
             removeButtonElem.innerHTML = "Remove";
             removeButtonElem.classList.add("button");
@@ -106,20 +106,20 @@
             removeButtonElem.addEventListener("click", async (e: any) => {
               e.preventDefault();
               if (
-                this.elm &&
+                this.imageInputElement &&
                 this.imageURL &&
-                this.previewSection &&
-                this.uploadSection
+                this.previewSectionElement &&
+                this.uploadSectionElement
               ) {
-                this.elm.value = "";
+                this.imageInputElement.value = "";
                 this.imageURL = "";
-                this.previewSection.style.display = "none";
-                this.uploadSection.style.display = "block";
+                this.previewSectionElement.style.display = "none";
+                this.uploadSectionElement.style.display = "block";
               }
             });
-            this.previewSection.appendChild(removeButtonElem);
-            this.previewSection.style.display = "block";
-            this.uploadSection.style.display = "none";
+            this.previewSectionElement.appendChild(removeButtonElem);
+            this.previewSectionElement.style.display = "block";
+            this.uploadSectionElement.style.display = "none";
           }
         }
       }
@@ -136,14 +136,14 @@
       //Allows for observing when the input data is set async
       this.observer.observe(this, { attributes: true });
 
-      this.btnElem?.addEventListener("click", async (e) => {
+      this.uploadButtonElement?.addEventListener("click", async (e) => {
         e.preventDefault();
-        if (this.fileInputElem) {
-          this.fileInputElem.click();
+        if (this.fileInputElement) {
+          this.fileInputElement.click();
         }
       });
 
-      this.fileInputElem?.addEventListener("change", async (e: any) => {
+      this.fileInputElement?.addEventListener("change", async (e: any) => {
         console.log(e.currentTarget?.files);
         if (e?.currentTarget?.files?.length) {
           uploadHandler(e?.currentTarget?.files[0]);
@@ -152,19 +152,19 @@
 
       const uploadHandler = async (file: any) => {
         if (
-          !this.elm ||
-          !this.imgLoader ||
-          !this.fileDetailsArea ||
-          !this.fileName ||
-          !this.fileSize ||
-          !this.imgLoader
+          !this.imageInputElement ||
+          !this.imageLoaderElement ||
+          !this.fileDetailsAreaElement ||
+          !this.fileNameElement ||
+          !this.fileSizeElement ||
+          !this.imageLoaderElement
         )
           return;
 
-        this.elm.value = "";
+        this.imageInputElement.value = "";
 
         try {
-          this.imgLoader.classList.add("loader");
+          this.imageLoaderElement.classList.add("loader");
 
           const result = await appwriteStorage.createFile(
             import.meta.env.PUBLIC_APPWRITE_BUCKET_ID,
@@ -172,11 +172,11 @@
             file
           );
           console.log("result", result);
-          this.fileDetailsArea.style.display = "block";
-          this.fileName.innerText = result.name;
-          this.fileSize.innerText =
+          this.fileDetailsAreaElement.style.display = "block";
+          this.fileNameElement.innerText = result.name;
+          this.fileSizeElement.innerText =
             (result.sizeOriginal / 1024).toFixed(2) + " KB";
-          this.elm.value = `${
+          this.imageInputElement.value = `${
             import.meta.env.PUBLIC_APPWRITE_ENDPOINT
           }/storage/buckets/${
             import.meta.env.PUBLIC_APPWRITE_BUCKET_ID
@@ -186,7 +186,7 @@
         } catch (err) {
           alert(err);
         } finally {
-          this.imgLoader.classList.remove("loader");
+          this.imageLoaderElement.classList.remove("loader");
         }
       };
     }
