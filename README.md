@@ -4,7 +4,7 @@ This repository has various example projects created by the Appwrite community u
 
 ## Small Examples
 
-- [**Blog**](/blog/) Example of how to build a blog website using Astro.
+- [**Blog**](/example-blog/) Example of how to build a blog website using Astro.
 
 ## Large Projects
 

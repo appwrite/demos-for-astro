@@ -43,15 +43,15 @@ import UploadFile from "../../components/UploadFile.astro";
         // Set form value from post
         const titleInputElement: HTMLInputElement | null =
           form.querySelector('[name="title"]');
-        const description: HTMLInputElement | null = form.querySelector(
+        const descriptionInputElement: HTMLInputElement | null = form.querySelector(
           '[name="description"]'
         );
-        const content: HTMLInputElement | null =
+        const contentInputElement: HTMLInputElement | null =
           form.querySelector('[name="content"]');
-        if (titleInputElement && description && content) {
+        if (titleInputElement && descriptionInputElement && contentInputElement) {
           titleInputElement.value = post?.title || "";
-          description.value = post?.description || "";
-          content.value = post?.content || "";
+          descriptionInputElement.value = post?.description || "";
+          contentInputElement.value = post?.content || "";
         }
 
         form.addEventListener("submit", async (event) => {

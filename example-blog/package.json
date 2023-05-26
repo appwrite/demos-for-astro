@@ -17,6 +17,10 @@
     "@astrojs/vercel": "^3.4.0",
     "appwrite": "^11.0.0",
     "astro": "^2.5.5",
-    "nanostores": "^0.8.1"
+    "nanostores": "^0.8.1",
+    "sanitize-html": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/sanitize-html": "^2.9.0"
   }
 }

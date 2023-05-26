@@ -9,61 +9,36 @@ import HeaderAccount from "../components/HeaderAccount.astro";
   const darkThemeButton: HTMLButtonElement | null =
     document.querySelector("#theme-toggle-dark");
 
-  function setTheme() {
-    const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
-    const theme =
-      localStorage.getItem("theme") ??
-      (defaultTheme.matches ? "dark" : "light");
-    if (lightThemeButton && darkThemeButton) {
-      if (theme === "dark") {
-        document.body.classList.remove("theme-light");
-        document.body.classList.add("theme-dark");
-        lightThemeButton.style.display = "none";
-        darkThemeButton.style.display = "block";
-      } else {
-        document.body.classList.remove("theme-dark");
-        document.body.classList.add("theme-light");
-        lightThemeButton.style.display = "block";
-        darkThemeButton.style.display = "none";
-      }
-    }
-  }
+  const getPreferredTheme = () => {
+    const isDarkThemePreferred = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return (
+      localStorage.getItem("theme") ?? (isDarkThemePreferred ? "dark" : "light")
+    );
+  };
 
-  function toggleTheme() {
-    const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
-    const theme =
-      localStorage.getItem("theme") ??
-      (defaultTheme.matches ? "dark" : "light");
-    if (theme === "dark") {
-      localStorage.setItem("theme", "light");
-      document.body.classList.remove("theme-dark");
-      document.body.classList.add("theme-light");
+  const setTheme = (theme: string) => {
+    document.body.className = `theme-${theme}`;
+    if (lightThemeButton)
+      lightThemeButton.style.display = theme === "dark" ? "none" : "block";
+    if (darkThemeButton)
+      darkThemeButton.style.display = theme === "light" ? "none" : "block";
+  };
 
-      if (lightThemeButton && darkThemeButton) {
-        lightThemeButton.style.display = "block";
-        darkThemeButton.style.display = "none";
-      }
-    } else {
-      localStorage.setItem("theme", "dark");
-      document.body.classList.remove("theme-light");
-      document.body.classList.add("theme-dark");
-      if (lightThemeButton && darkThemeButton) {
-        lightThemeButton.style.display = "none";
-        darkThemeButton.style.display = "block";
-      }
-    }
-  }
+  const toggleTheme = () => {
+    const currentTheme = getPreferredTheme();
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    localStorage.setItem("theme", newTheme);
+    setTheme(newTheme);
+  };
 
-  //Check for theme on load
-  if (lightThemeButton && darkThemeButton) {
-    setTheme();
-    lightThemeButton?.addEventListener("click", (e) => {
-      toggleTheme();
-    });
-    darkThemeButton?.addEventListener("click", (e) => {
-      toggleTheme();
-    });
-  }
+  document.addEventListener("DOMContentLoaded", (event) => {
+    setTheme(getPreferredTheme());
+    if (lightThemeButton)
+      lightThemeButton.addEventListener("click", toggleTheme);
+    if (darkThemeButton) darkThemeButton.addEventListener("click", toggleTheme);
+  });
 </script>
 
 <header class="main-header u-padding-inline-end-0">
@@ -86,7 +61,6 @@ import HeaderAccount from "../components/HeaderAccount.astro";
         <button
           id="theme-toggle-dark"
           class="button is-only-icon is-text"
-          x-on:click="toggleTheme(); theme = 'light'"
           aria-label="Replace to Light Mode Theme"
         >
           <span class="icon-moon" aria-hidden="true"></span>

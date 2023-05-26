@@ -24,6 +24,7 @@ const { postId } = Astro.props;
 <script>
   import { AppwriteException, ID, Query } from "appwrite";
   import { atom, WritableAtom } from "nanostores";
+  import sanitizeHtml from "sanitize-html";
   import {
     appwriteClient,
     appwriteDatabases,
@@ -40,33 +41,29 @@ const { postId } = Astro.props;
     constructor() {
       super();
       if (!this.dataset.postid) return;
-
       this.postId = this.dataset.postid;
+
       // Only show comments for users logged in.
       this.showUsers();
     }
 
     async showUsers() {
       user$.subscribe((user) => {
-        if (user) {
-          this.style.display = "block";
-        } else {
-          this.style.display = "none";
-          return;
-        }
-        //Only users get comments
-        this.addCommentInput();
+        this.style.display = user ? "block" : "none";
+
+        // Only users get comments
+
         this.loadComments();
+
+        if (!user) return;
         this.subComments();
+        this.addCommentInput();
       });
     }
 
     addCommentInput() {
       const formElement: HTMLFormElement | null = this.querySelector("form");
-      const buttonElement: HTMLButtonElement | null =
-        this.querySelector("button");
-
-      if (!formElement || !buttonElement) return;
+      if (!formElement) return;
 
       formElement.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -105,6 +102,32 @@ const { postId } = Astro.props;
       }
     }
 
+    async handleCreateEvent(updatedComment: BlogComment) {
+      console.debug(`Adding: ${updatedComment.$id}`);
+      // Append new payload to the list
+      this.comments$.set([...[updatedComment], ...this.comments$.get()]);
+    }
+
+    async handleUpdateEvent(updatedComment: BlogComment) {
+      console.debug(`Updating: ${updatedComment.$id}`);
+      // Find payload item and update
+      const comments = this.comments$.get();
+      this.comments$.set([
+        ...comments.map((c) =>
+          c.$id === updatedComment.$id ? updatedComment : c
+        ),
+      ]);
+    }
+
+    async handleDeleteEvent(updatedComment: BlogComment) {
+      console.debug(`Removing: ${updatedComment.$id}`);
+      // Find and remove payload item
+      const comments = this.comments$.get();
+      this.comments$.set([
+        ...comments.filter((c) => c.$id !== updatedComment.$id),
+      ]);
+    }
+
     async subComments() {
       this.comments$.listen((commentEvent) => {
         const commentsElement: HTMLUListElement | null =
@@ -113,17 +136,17 @@ const { postId } = Astro.props;
           commentsElement.replaceChildren();
           commentEvent.map((c) => {
             const commentItem = `<li class="list-item" data-postid="${c?.$id}">
-          <span class="icon-chat" aria-hidden="true"></span>
-          <span class="text">${c?.content}</span>
-        </li>`;
+    <span class="icon-chat" aria-hidden="true"></span>
+    <span class="text">${sanitizeHtml(c?.content)}</span>
+  </li>`;
             commentsElement.insertAdjacentHTML("beforeend", commentItem);
           });
         }
       });
 
-      const sub = `databases.${this.databaseId}.collections.${this.collectionId}.documents`;
+      const event = `databases.${this.databaseId}.collections.${this.collectionId}.documents`;
       try {
-        appwriteClient.subscribe(sub, (response) => {
+        appwriteClient.subscribe(event, (response) => {
           const updatedComment: BlogComment = response.payload as BlogComment;
           if (updatedComment.postId !== this.postId) {
             console.debug(
@@ -132,30 +155,18 @@ const { postId } = Astro.props;
             return;
           }
 
-          if (response.events.includes(`${sub}.${updatedComment.$id}.create`)) {
-            console.debug(`Adding: ${updatedComment.$id}`);
-            // Append new payload to the list
-            this.comments$.set([...[updatedComment], ...this.comments$.get()]);
-          } else if (
-            response.events.includes(`${sub}.${updatedComment.$id}.update`)
+          if (
+            response.events.includes(`${event}.${updatedComment.$id}.create`)
           ) {
-            console.debug(`Updating: ${updatedComment.$id}`);
-            // Find payload item and update
-            const comments = this.comments$.get();
-            this.comments$.set([
-              ...comments.map((c) =>
-                c.$id === updatedComment.$id ? updatedComment : c
-              ),
-            ]);
+            this.handleCreateEvent(updatedComment);
           } else if (
-            response.events.includes(`${sub}.${updatedComment.$id}.delete`)
+            response.events.includes(`${event}.${updatedComment.$id}.update`)
           ) {
-            console.debug(`Removing: ${updatedComment.$id}`);
-            // Find and remove payload item
-            const comments = this.comments$.get();
-            this.comments$.set([
-              ...comments.filter((c) => c.$id !== updatedComment.$id),
-            ]);
+            this.handleUpdateEvent(updatedComment);
+          } else if (
+            response.events.includes(`${event}.${updatedComment.$id}.delete`)
+          ) {
+            this.handleDeleteEvent(updatedComment);
           }
         });
       } catch (error) {

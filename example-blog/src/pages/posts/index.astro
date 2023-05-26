@@ -5,23 +5,17 @@ import AdminButtons from "../../components/AdminButtons.astro";
 import AdminCreate from "../../components/AdminCreate.astro";
 import { Query } from "appwrite";
 
-console.log(import.meta.env.PUBLIC_APPWRITE_POSTS_ID);
-
 const { documents: posts } = (await appwriteDatabases.listDocuments(
   import.meta.env.PUBLIC_APPWRITE_DB_ID,
   import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
   [Query.orderDesc("$createdAt")]
 )) as BlogPostList;
-
-console.log(posts);
 ---
 
 <SiteLayout>
-  <section class="u-flex u-flex-vertical u-gap-4">
-    <section class="u-position-relative">
-      <AdminCreate />
-    </section>
+  <section class="u-flex u-flex-vertical u-gap-16">
     <h1 class="heading-level-1">Blog</h1>
+    <AdminCreate />
     <ul class="list">
       {
         posts.map((post) => (
