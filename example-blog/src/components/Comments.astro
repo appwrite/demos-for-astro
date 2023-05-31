@@ -5,7 +5,7 @@ interface Props {
 const { postId } = Astro.props;
 ---
 
-<appwrite-post-comments data-postid={postId} style="display: none;">
+<post-comments data-postid={postId} style="display: none;">
   <div class="u-flex u-flex-vertical u-gap-16">
     <form class="form u-width-full-line u-flex u-flex-vertical u-gap-16">
       <ul class="form-list">
@@ -19,7 +19,7 @@ const { postId } = Astro.props;
     </form>
     <ul class="list"></ul>
   </div>
-</appwrite-post-comments>
+</post-comments>
 
 <script>
   import { AppwriteException, ID, Query } from "appwrite";
@@ -32,9 +32,7 @@ const { postId } = Astro.props;
     user$,
   } from "../lib/appwrite";
 
-  class AppwritePostComments extends HTMLElement {
-    databaseId = import.meta.env.PUBLIC_APPWRITE_DB_ID;
-    collectionId = import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID;
+  class Comments extends HTMLElement {
     postId: string = "";
     comments$: WritableAtom<BlogComment[]> = atom([]);
 
@@ -52,7 +50,6 @@ const { postId } = Astro.props;
         this.style.display = user ? "block" : "none";
 
         // Only users get comments
-
         this.loadComments();
 
         if (!user) return;
@@ -74,8 +71,8 @@ const { postId } = Astro.props;
           try {
             console.log(Object.fromEntries(formData));
             await appwriteDatabases.createDocument(
-              this.databaseId,
-              this.collectionId,
+              import.meta.env.PUBLIC_APPWRITE_DB_ID,
+              import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID,
               ID.unique(),
               { ...Object.fromEntries(formData), postId: this.postId }
             );
@@ -91,8 +88,8 @@ const { postId } = Astro.props;
     async loadComments() {
       try {
         const comments = await appwriteDatabases.listDocuments(
-          this.databaseId,
-          this.collectionId,
+          import.meta.env.PUBLIC_APPWRITE_DB_ID,
+          import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID,
           [Query.equal("postId", this.postId), Query.orderDesc("$createdAt")]
         );
         this.comments$.set(comments.documents as BlogComment[]);
@@ -144,7 +141,9 @@ const { postId } = Astro.props;
         }
       });
 
-      const event = `databases.${this.databaseId}.collections.${this.collectionId}.documents`;
+      const event = `databases.${
+        import.meta.env.PUBLIC_APPWRITE_DB_ID
+      }.collections.${import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID}.documents`;
       try {
         appwriteClient.subscribe(event, (response) => {
           const updatedComment: BlogComment = response.payload as BlogComment;
@@ -175,5 +174,5 @@ const { postId } = Astro.props;
       }
     }
   }
-  customElements.define("appwrite-post-comments", AppwritePostComments);
+  customElements.define("post-comments", Comments);
 </script>

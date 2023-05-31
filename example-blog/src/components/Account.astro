@@ -5,7 +5,7 @@ import NavLink from "./NavLink.astro";
 <script>
   // Check if user has session
   import { isLoggedIn } from "../lib/appwrite";
-  
+
   const loginElement: HTMLElement | null = document.querySelector("#login");
   const accountElement: HTMLElement | null = document.querySelector("#account");
 
@@ -23,13 +23,13 @@ import NavLink from "./NavLink.astro";
 
 <div id="login">
   <NavLink href="/account/login">
-    <span class="icon-cog" aria-hidden="true"></span>
-    <span class="text"> Login</span>
+    <span class="icon-user" aria-hidden="true"></span>
+    <span class="text">Login</span>
   </NavLink>
 </div>
 <div id="account">
   <NavLink href="/account">
-    <span class="icon-cog" aria-hidden="true"></span>
-    <span class="text"> Account</span>
+    <span class="icon-user" aria-hidden="true"></span>
+    <span class="text">Account</span>
   </NavLink>
 </div>

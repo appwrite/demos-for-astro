@@ -3,7 +3,7 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 ---
 
 <script>
-  import { user$, logout } from "../../lib/appwrite";
+  import { user$, logout, isAuthor } from "../../lib/appwrite";
 
   const loginElem: HTMLElement | null =
     document.querySelector("#accountLoginLink");
@@ -25,6 +25,16 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
     }
   });
 
+  isAuthor.subscribe((isAuthor) => {
+    if (!loginElem || !userElem) return;
+    if (isAuthor) {
+      const accountAuthorDetailElem: HTMLElement | null =
+        document.querySelector("#accountAuthorDetail");
+      if (accountAuthorDetailElem)
+        accountAuthorDetailElem.innerHTML = `Author: ${isAuthor}`;
+    }
+  });
+
   const logoutElem: HTMLButtonElement | null =
     document.querySelector("#account-logout");
   logoutElem?.addEventListener("click", (e) => {
@@ -42,6 +52,7 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 
     <section id="accountUser">
       <section id="accountUserDetail"></section>
+      <section id="accountAuthorDetail"></section>
       <button id="account-logout" class="button">Logout</button>
     </section>
   </section>

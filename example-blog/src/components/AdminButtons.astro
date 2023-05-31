@@ -20,7 +20,7 @@ const post = JSON.parse(poststring);
     </ModalDelete>
     <a
       class="button is-secondary"
-      href={`/blog/edit?id=${post.$id}`}
+      href={`/posts/edit?id=${post.$id}`}
       aria-label="Edit Post"
     >
       <span class="icon-pencil" aria-hidden="true"></span>
@@ -30,20 +30,17 @@ const post = JSON.parse(poststring);
 </section>
 
 <script>
-  // Check if user has session
-  import { user$ } from "../lib/appwrite";
-
-  // This gets ALL buttons on the screen
-  const authorButtonsElement: NodeListOf<HTMLElement> | null =
-    document.querySelectorAll(".adminButtons");
+  import { isAuthor } from "../lib/appwrite";
 
   // Show Buttons if user is an admin
-  user$.subscribe((user) => {
-    if (!authorButtonsElement) return;
-    if (user && user.prefs.admin) {
-      Array.from(authorButtonsElement).map((b) => (b.style.display = "block"));
+  isAuthor.subscribe((isAuthor) => {
+    const authorButtonsElements: NodeListOf<HTMLElement> | null =
+      document.querySelectorAll(".adminButtons");
+    if (!authorButtonsElements) return;
+    if (isAuthor) {
+      Array.from(authorButtonsElements).map((b) => (b.style.display = "block"));
     } else {
-      Array.from(authorButtonsElement).map((b) => (b.style.display = "none"));
+      Array.from(authorButtonsElements).map((b) => (b.style.display = "none"));
     }
   });
 </script>

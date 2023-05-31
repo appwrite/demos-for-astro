@@ -1,16 +1,11 @@
 ---
-import BaseHead from "../../components/BaseHead.astro";
-import Header from "../../components/Header.astro";
-import SideNav from "../../components/SideNav.astro";
-import Footer from "../../components/Footer.astro";
 import UploadFile from "../../components/UploadFile.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
 ---
 
 <script>
   import type { AppwriteException } from "appwrite";
   import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
-
-  import { dateForDateTimeInputValue } from "../../lib/utilities";
 
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -43,12 +38,15 @@ import UploadFile from "../../components/UploadFile.astro";
         // Set form value from post
         const titleInputElement: HTMLInputElement | null =
           form.querySelector('[name="title"]');
-        const descriptionInputElement: HTMLInputElement | null = form.querySelector(
-          '[name="description"]'
-        );
+        const descriptionInputElement: HTMLInputElement | null =
+          form.querySelector('[name="description"]');
         const contentInputElement: HTMLInputElement | null =
           form.querySelector('[name="content"]');
-        if (titleInputElement && descriptionInputElement && contentInputElement) {
+        if (
+          titleInputElement &&
+          descriptionInputElement &&
+          contentInputElement
+        ) {
           titleInputElement.value = post?.title || "";
           descriptionInputElement.value = post?.description || "";
           contentInputElement.value = post?.content || "";
@@ -75,39 +73,25 @@ import UploadFile from "../../components/UploadFile.astro";
   }
 </script>
 
-<html lang="en">
-  <head>
-    <BaseHead title="Edit" description="Edit Post" />
-  </head>
-  <body>
-    <div class="grid-with-side">
-      <Header />
-      <SideNav />
-      <main class="main-content">
-        <div class="container">
-          <form
-            class="form u-width-full-line u-max-width-500 u-flex u-flex-vertical u-gap-16"
-          >
-            <ul class="form-list">
-              <li class="form-item">
-                <label class="label">Title</label>
-                <input name="title" type="text" class="input-text" />
-              </li>
-              <UploadFile />
-              <li class="form-item">
-                <label class="label">Description</label>
-                <input name="description" type="text" class="input-text" />
-              </li>
-              <li class="form-item">
-                <label class="label">Content</label>
-                <textarea name="content" class="input-text"></textarea>
-              </li>
-            </ul>
-            <button type="submit" class="button">Update</button>
-          </form>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  </body>
-</html>
+<SiteLayout>
+  <form
+    class="form u-width-full-line u-max-width-500 u-flex u-flex-vertical u-gap-16"
+  >
+    <ul class="form-list">
+      <li class="form-item">
+        <label class="label">Title</label>
+        <input name="title" type="text" class="input-text" />
+      </li>
+      <UploadFile />
+      <li class="form-item">
+        <label class="label">Description</label>
+        <input name="description" type="text" class="input-text" />
+      </li>
+      <li class="form-item">
+        <label class="label">Content</label>
+        <textarea name="content" class="input-text"></textarea>
+      </li>
+    </ul>
+    <button type="submit" class="button">Update</button>
+  </form>
+</SiteLayout>

@@ -6,6 +6,8 @@ import {
   Storage,
   ID,
   type Models,
+  Teams,
+  Query,
 } from "appwrite";
 import { atom, WritableAtom } from "nanostores";
 
@@ -16,6 +18,7 @@ export const appwriteClient = new Client()
 
 export const appwriteDatabases = new Databases(appwriteClient);
 export const appwriteStorage = new Storage(appwriteClient);
+export const appwriteTeams = new Teams(appwriteClient);
 
 /** Database */
 export interface BlogPost extends Models.Document {
@@ -37,6 +40,7 @@ export interface BlogCommentList extends Models.DocumentList<BlogComment> {}
 export const appwriteAccount = new Account(appwriteClient);
 export const isLoggedIn: WritableAtom<undefined | Models.Session> =
   atom(undefined);
+export const isAuthor: WritableAtom<boolean> = atom(false);
 
 // Check for session
 appwriteAccount.getSession("current").then(
@@ -54,6 +58,15 @@ export const user$: WritableAtom<undefined | Models.User<Models.Preferences>> =
 isLoggedIn.subscribe(async (session) => {
   if (session?.userId) {
     user$.set(await account());
+  }
+});
+
+isLoggedIn.subscribe(async (session) => {
+  if (session?.userId) {
+    const authorMemberships = await appwriteTeams.listMemberships("authors", [
+      Query.equal("userId", session.userId),
+    ]);
+    isAuthor.set(authorMemberships.total > 0);
   }
 });
 

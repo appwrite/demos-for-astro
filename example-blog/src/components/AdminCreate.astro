@@ -1,5 +1,5 @@
 <section class="adminButtons" style="display: none">
-  <div style="display:flex; gap: 0.5rem">
+  <div class="u-flex u-gap-8">
     <a class="button" href={`/posts/create`} aria-label="Create Post">
       <span class="icon-plus" aria-hidden="true"></span>
       <span class="text">Create</span>
@@ -9,16 +9,16 @@
 
 <script>
   // Check if user has session
-  import { user$ } from "../lib/appwrite";
+  import { isAuthor } from "../lib/appwrite";
 
   // This gets ALL buttons on the screen
   const authorButtonsElement: NodeListOf<HTMLElement> | null =
     document.querySelectorAll(".adminButtons");
 
   // Show Buttons if user is an admin
-  user$.subscribe((user) => {
+  isAuthor.subscribe((isAuthor) => {
     if (!authorButtonsElement) return;
-    if (user && user.prefs.admin) {
+    if (isAuthor) {
       Array.from(authorButtonsElement).map((b) => (b.style.display = "block"));
     } else {
       Array.from(authorButtonsElement).map((b) => (b.style.display = "none"));
@@ -30,10 +30,5 @@
   button {
     display: flex;
     cursor: pointer;
-  }
-  .adminButtons {
-    position: absolute;
-    top: 0;
-    right: 0;
   }
 </style>
