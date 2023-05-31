@@ -3,6 +3,8 @@ import HeaderAccount from "../components/HeaderAccount.astro";
 ---
 
 <script>
+  import { atom } from "nanostores";
+
   const lightThemeButton: HTMLButtonElement | null = document.querySelector(
     "#theme-toggle-light"
   );
@@ -39,6 +41,24 @@ import HeaderAccount from "../components/HeaderAccount.astro";
       lightThemeButton.addEventListener("click", toggleTheme);
     if (darkThemeButton) darkThemeButton.addEventListener("click", toggleTheme);
   });
+
+  const isMenuOpen = atom(false);
+
+  isMenuOpen.subscribe((menuIsOpen) => {
+    const mainSideElement: HTMLDivElement | null = document.querySelector(
+      ".main-side.is-not-desktop"
+    );
+    if (mainSideElement) {
+      mainSideElement.style.display = menuIsOpen ? "block" : "none";
+    }
+  });
+
+  const navigationButton: HTMLButtonElement | null =
+    document.querySelector(".nav-btn");
+  if (navigationButton)
+    navigationButton.addEventListener("click", () => {
+      isMenuOpen.set(!isMenuOpen.get());
+    });
 </script>
 
 <header class="main-header u-padding-inline-end-0">
