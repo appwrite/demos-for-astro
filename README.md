@@ -4,7 +4,7 @@ This repository has various example projects created by the Appwrite community u
 
 ## Small Examples
 
-- [**Blog**](/example-blog/) Example of how to build a blog website using Astro.
+- [**example-blog**](https://demos-for-astro-example-blog.vercel.app/) - a basic blog with authentication, posts and comments.
 
 ## Large Projects
 
