@@ -25,19 +25,6 @@ import ThemeSwitcher from "./ThemeSwitcher.astro";
     });
 </script>
 
-<script is:inline>
-  const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
-  const theme =
-    localStorage.getItem("theme") ?? (defaultTheme.matches ? "dark" : "light");
-  if (theme === "dark") {
-    document.body.classList.remove("theme-light");
-    document.body.classList.add("theme-dark");
-  } else {
-    document.body.classList.remove("theme-dark");
-    document.body.classList.add("theme-light");
-  }
-</script>
-
 <header class="main-header u-padding-inline-end-0">
   <button class="icon-button is-not-desktop nav-btn" aria-label="Open Menu">
     <span aria-hidden="true" class="icon-menu"></span>
