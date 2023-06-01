@@ -69,7 +69,6 @@ const { postId } = Astro.props;
         if (commentInputElement) {
           const formData = new FormData(formElement);
           try {
-            console.log(Object.fromEntries(formData));
             await appwriteDatabases.createDocument(
               import.meta.env.PUBLIC_APPWRITE_DB_ID,
               import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID,
@@ -100,13 +99,11 @@ const { postId } = Astro.props;
     }
 
     async handleCreateEvent(updatedComment: BlogComment) {
-      console.debug(`Adding: ${updatedComment.$id}`);
       // Append new payload to the list
       this.comments$.set([...[updatedComment], ...this.comments$.get()]);
     }
 
     async handleUpdateEvent(updatedComment: BlogComment) {
-      console.debug(`Updating: ${updatedComment.$id}`);
       // Find payload item and update
       const comments = this.comments$.get();
       this.comments$.set([
@@ -117,7 +114,6 @@ const { postId } = Astro.props;
     }
 
     async handleDeleteEvent(updatedComment: BlogComment) {
-      console.debug(`Removing: ${updatedComment.$id}`);
       // Find and remove payload item
       const comments = this.comments$.get();
       this.comments$.set([
@@ -148,9 +144,6 @@ const { postId } = Astro.props;
         appwriteClient.subscribe(event, (response) => {
           const updatedComment: BlogComment = response.payload as BlogComment;
           if (updatedComment.postId !== this.postId) {
-            console.debug(
-              `postId: ${updatedComment.postId} does not match current post ${this.postId}`
-            );
             return;
           }
 

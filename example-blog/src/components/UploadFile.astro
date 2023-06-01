@@ -149,7 +149,6 @@
       });
 
       this.fileInputElement?.addEventListener("change", async (e: any) => {
-        console.log(e.currentTarget?.files);
         if (e?.currentTarget?.files?.length) {
           uploadHandler(e?.currentTarget?.files[0]);
         }
@@ -176,7 +175,6 @@
             ID.unique(),
             file
           );
-          console.log("result", result);
           this.fileDetailsAreaElement.style.display = "block";
           this.fileNameElement.innerText = result.name;
           this.fileSizeElement.innerText =

@@ -1,46 +1,10 @@
 ---
 import HeaderAccount from "../components/HeaderAccount.astro";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
 ---
 
 <script>
   import { atom } from "nanostores";
-
-  const lightThemeButton: HTMLButtonElement | null = document.querySelector(
-    "#theme-toggle-light"
-  );
-  const darkThemeButton: HTMLButtonElement | null =
-    document.querySelector("#theme-toggle-dark");
-
-  const getPreferredTheme = () => {
-    const isDarkThemePreferred = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return (
-      localStorage.getItem("theme") ?? (isDarkThemePreferred ? "dark" : "light")
-    );
-  };
-
-  const setTheme = (theme: string) => {
-    document.body.className = `theme-${theme}`;
-    if (lightThemeButton)
-      lightThemeButton.style.display = theme === "dark" ? "none" : "block";
-    if (darkThemeButton)
-      darkThemeButton.style.display = theme === "light" ? "none" : "block";
-  };
-
-  const toggleTheme = () => {
-    const currentTheme = getPreferredTheme();
-    const newTheme = currentTheme === "dark" ? "light" : "dark";
-    localStorage.setItem("theme", newTheme);
-    setTheme(newTheme);
-  };
-
-  document.addEventListener("DOMContentLoaded", (event) => {
-    setTheme(getPreferredTheme());
-    if (lightThemeButton)
-      lightThemeButton.addEventListener("click", toggleTheme);
-    if (darkThemeButton) darkThemeButton.addEventListener("click", toggleTheme);
-  });
 
   const isMenuOpen = atom(false);
 
@@ -61,30 +25,28 @@ import HeaderAccount from "../components/HeaderAccount.astro";
     });
 </script>
 
+<script is:inline>
+  const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
+  const theme =
+    localStorage.getItem("theme") ?? (defaultTheme.matches ? "dark" : "light");
+  if (theme === "dark") {
+    document.body.classList.remove("theme-light");
+    document.body.classList.add("theme-dark");
+  } else {
+    document.body.classList.remove("theme-dark");
+    document.body.classList.add("theme-light");
+  }
+</script>
+
 <header class="main-header u-padding-inline-end-0">
   <button class="icon-button is-not-desktop nav-btn" aria-label="Open Menu">
     <span aria-hidden="true" class="icon-menu"></span>
   </button>
-  <a class="logo" href="/">Appwrite + Astro = ❤️</a>
+  <a class="logo heading-level-6 u-bold" href="/">Appwrite + Astro = ❤️</a>
   <div class="main-header-end u-margin-inline-end-16">
     <ul class="buttons-list is-with-padding">
       <li class="buttons-list-item u-padding-inline-0">
-        <!-- Light -->
-        <button
-          id="theme-toggle-light"
-          class="button is-only-icon is-text"
-          aria-label="Replace to Dark Mode Theme"
-        >
-          <span class="icon-sun" aria-hidden="true"></span>
-        </button>
-        <!-- Dark -->
-        <button
-          id="theme-toggle-dark"
-          class="button is-only-icon is-text"
-          aria-label="Replace to Light Mode Theme"
-        >
-          <span class="icon-moon" aria-hidden="true"></span>
-        </button>
+        <ThemeSwitcher />
       </li>
     </ul>
     <HeaderAccount />

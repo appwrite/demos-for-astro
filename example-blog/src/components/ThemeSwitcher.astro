@@ -1,0 +1,66 @@
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const lightThemeButton: HTMLButtonElement | null = document.querySelector(
+      ".light-theme-button"
+    );
+    const darkThemeButton: HTMLButtonElement | null =
+      document.querySelector(".dark-theme-button");
+
+    function toggleButtons() {
+      if (!lightThemeButton || !darkThemeButton) return;
+      const theme = getTheme();
+      if (theme === "dark") {
+        darkThemeButton.style.display = "none";
+        lightThemeButton.style.display = "";
+      } else {
+        darkThemeButton.style.display = "";
+        lightThemeButton.style.display = "none";
+      }
+    }
+
+    function getTheme() {
+      const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
+      const theme =
+        localStorage.getItem("theme") ??
+        (defaultTheme.matches ? "dark" : "light");
+      return theme;
+    }
+
+    function toggleTheme() {
+      const theme = getTheme();
+      if (theme === "dark") {
+        localStorage.setItem("theme", "light");
+        document.body.classList.remove("theme-dark");
+        document.body.classList.add("theme-light");
+      } else {
+        localStorage.setItem("theme", "dark");
+        document.body.classList.remove("theme-light");
+        document.body.classList.add("theme-dark");
+      }
+      toggleButtons();
+    }
+
+    if (!lightThemeButton || !darkThemeButton) return;
+    lightThemeButton.addEventListener("click", toggleTheme);
+    darkThemeButton.addEventListener("click", toggleTheme);
+
+    // Initialize button visibility on page load
+    toggleButtons();
+  });
+</script>
+
+<div id="themeSwitcher">
+  <button
+    class="button is-only-icon is-text light-theme-button"
+    aria-label="Replace to Dark Mode Theme"
+  >
+    <span class="icon-sun" aria-hidden="true"></span>
+  </button>
+  <button
+    class="button is-only-icon is-text dark-theme-button"
+    style="display: none;"
+    aria-label="Replace to Light Mode Theme"
+  >
+    <span class="icon-moon" aria-hidden="true"></span>
+  </button>
+</div>

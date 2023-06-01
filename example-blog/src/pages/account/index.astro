@@ -5,33 +5,37 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 <script>
   import { user$, logout, isAuthor } from "../../lib/appwrite";
 
-  const loginElem: HTMLElement | null =
+  const loginElement: HTMLElement | null =
     document.querySelector("#accountLoginLink");
-  const userElem: HTMLElement | null = document.querySelector("#accountUser");
+  const userElement: HTMLElement | null =
+    document.querySelector("#accountUser");
 
   user$.subscribe((user) => {
-    if (!loginElem || !userElem) return;
-    if (user) {
-      loginElem.style.display = "none";
-      userElem.style.display = "flex";
+    if (!loginElement || !userElement) return;
+    if (!user) {
+      loginElement.style.display = "flex";
+      userElement.style.display = "none";
+      return;
+    }
 
-      const accountUserDetailElem: HTMLElement | null =
-        document.querySelector("#accountUserDetail");
-      if (accountUserDetailElem)
-        accountUserDetailElem.innerHTML = `Email: ${user.email}`;
-    } else {
-      loginElem.style.display = "flex";
-      userElem.style.display = "none";
+    loginElement.style.display = "none";
+    userElement.style.display = "flex";
+
+    const userDetailsElement: HTMLElement | null =
+      userElement.querySelector("#accountUserDetail");
+
+    if (userDetailsElement) {
+      userDetailsElement.innerHTML = `Email: ${user.email}`;
     }
   });
 
   isAuthor.subscribe((isAuthor) => {
-    if (!loginElem || !userElem) return;
-    if (isAuthor) {
-      const accountAuthorDetailElem: HTMLElement | null =
-        document.querySelector("#accountAuthorDetail");
-      if (accountAuthorDetailElem)
-        accountAuthorDetailElem.innerHTML = `Author: ${isAuthor}`;
+    if (!userElement || !isAuthor) return;
+    const authorDetailsElement: HTMLElement | null = userElement.querySelector(
+      "#accountAuthorDetail"
+    );
+    if (authorDetailsElement) {
+      authorDetailsElement.innerHTML = `Author: ${isAuthor}`;
     }
   });
 
