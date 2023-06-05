@@ -6,6 +6,7 @@ import {
   BlogPost as BlogPostType,
   BlogPostList,
 } from "../../lib/appwrite";
+import SiteLayout from "../../layouts/SiteLayout.astro";
 
 const { slug } = Astro.params;
 
@@ -26,4 +27,6 @@ if (!entries || !entries.documents.length) {
 const post: BlogPostType = entries?.documents[0];
 ---
 
-<BlogPost {...post} />
+<SiteLayout>
+  <BlogPost {...post} />
+</SiteLayout>
