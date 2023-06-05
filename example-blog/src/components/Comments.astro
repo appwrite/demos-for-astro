@@ -5,9 +5,12 @@ interface Props {
 const { postId } = Astro.props;
 ---
 
-<post-comments data-postid={postId} style="display: none;">
+<post-comments data-postid={postId}>
   <div class="u-flex u-flex-vertical u-gap-16">
-    <form class="form u-width-full-line u-flex u-flex-vertical u-gap-16">
+    <form
+      class="form u-width-full-line u-flex u-flex-vertical u-gap-16"
+      style="display: none;"
+    >
       <ul class="form-list">
         <li class="form-item">
           <label class="label">Comments</label>
@@ -47,14 +50,16 @@ const { postId } = Astro.props;
 
     async showUsers() {
       user$.subscribe((user) => {
-        this.style.display = user ? "block" : "none";
+        // Display the form only for logged-in users
+        if (user) {
+          this.querySelector("form")?.style.setProperty("display", "flex");
+          this.setupRealtimeComments();
+          this.addCommentInput();
+        }
 
-        // Only users get comments
+        // All users get comments
         this.loadComments();
-
-        if (!user) return;
-        this.subComments();
-        this.addCommentInput();
+        this.subscribeComments();
       });
     }
 
@@ -121,7 +126,7 @@ const { postId } = Astro.props;
       ]);
     }
 
-    async subComments() {
+    async subscribeComments() {
       this.comments$.listen((commentEvent) => {
         const commentsElement: HTMLUListElement | null =
           this.querySelector(".list");
@@ -136,7 +141,9 @@ const { postId } = Astro.props;
           });
         }
       });
+    }
 
+    async setupRealtimeComments() {
       const event = `databases.${
         import.meta.env.PUBLIC_APPWRITE_DB_ID
       }.collections.${import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID}.documents`;
