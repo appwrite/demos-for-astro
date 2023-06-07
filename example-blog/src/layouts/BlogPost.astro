@@ -27,7 +27,7 @@ const { $id, $updatedAt, $createdAt, title, content, description, imageurl } =
     }
     {$createdAt && <time>{new Date($createdAt).toLocaleDateString()}</time>}
   </div>
-  <hr class="hr" />
+  <hr style="border-bottom: 0.05rem solid hsl(var(--color-border))" />
   {content}
 </article>
 <section class="u-margin-block-start-32">
