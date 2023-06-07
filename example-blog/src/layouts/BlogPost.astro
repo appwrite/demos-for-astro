@@ -1,9 +1,4 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
-import SideNav from "../components/SideNav.astro";
-import Footer from "../components/Footer.astro";
 import AdminButtons from "../components/AdminButtons.astro";
 import Comments from "../components/Comments.astro";
 
@@ -11,54 +6,30 @@ import type { BlogPost as BlogPostType } from "../lib/appwrite";
 type Props = BlogPostType;
 
 const post = Astro.props;
-const { $id, $updatedAt, date, title, content, description, cover, imageurl } =
+const { $id, $updatedAt, $createdAt, title, content, description, imageurl } =
   post;
 ---
 
-<html lang="en">
-  <head>
-    <BaseHead title={title} description={description} />
-    <style>
-      hr {
-        border-top: 1px solid #ddd;
-        margin: 1rem 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="grid-with-side">
-      <Header />
-      <SideNav />
-      <main class="main-content">
-        <article class="container">
-          {
-            imageurl?.length > 0 ? (
-              <img width={720} src={imageurl} alt="" />
-            ) : null
-          }
-          <h1 class="heading-level-1" style="position:relative;">
-            {title}
-            <AdminButtons poststring={JSON.stringify(post)} />
-          </h1>
-          <div style="display:flex; gap: .5rem">
-            {date && <time>{new Date(date).toLocaleDateString()}</time>}
-            {
-              $updatedAt && (
-                <div>
-                  Last updated on{" "}
-                  <time>{new Date($updatedAt).toLocaleDateString()}</time>
-                </div>
-              )
-            }
-          </div>
-          <hr class="hr" />
-          {content}
-        </article>
-        <section class="comments container">
-          <Comments postId={$id} />
-        </section>
-      </main>
-      <Footer />
-    </div>
-  </body>
-</html>
+<article class="u-flex u-flex-vertical u-gap-16">
+  {imageurl?.length > 0 ? <img width={720} src={imageurl} alt="" /> : null}
+  <h1 class="heading-level-1" style="position:relative;">
+    {title}
+    <AdminButtons poststring={JSON.stringify(post)} />
+  </h1>
+  <div class="u-flex u-gap-8">
+    {
+      $updatedAt && (
+        <div>
+          Last updated on{" "}
+          <time>{new Date($updatedAt).toLocaleDateString()}</time>
+        </div>
+      )
+    }
+    {$createdAt && <time>{new Date($createdAt).toLocaleDateString()}</time>}
+  </div>
+  <hr style="border-bottom: 0.05rem solid hsl(var(--color-border))" />
+  {content}
+</article>
+<section class="u-margin-block-start-32">
+  <Comments postId={$id} />
+</section>

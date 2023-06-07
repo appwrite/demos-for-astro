@@ -2,35 +2,45 @@
 import NavLink from "./NavLink.astro";
 ---
 
+<account-nav>
+  <div id="login">
+    <NavLink href="/account/login">
+      <span class="icon-user" aria-hidden="true"></span>
+      <span class="text">Login</span>
+    </NavLink>
+  </div>
+  <div id="account">
+    <NavLink href="/account">
+      <span class="icon-user" aria-hidden="true"></span>
+      <span class="text">Account</span>
+    </NavLink>
+  </div>
+</account-nav>
+
 <script>
-  // Check if user has session
   import { isLoggedIn } from "../lib/appwrite";
 
-  const loginElem: HTMLElement | null = document.querySelector("#login");
-  const accountElem: HTMLElement | null = document.querySelector("#account");
+  class UserSession extends HTMLElement {
+    loginElement: HTMLElement | null;
+    accountElement: HTMLElement | null;
 
-  isLoggedIn.subscribe((user) => {
-    if (!accountElem || !loginElem) return;
-    if (user) {
-      loginElem.style.display = "none";
-      accountElem.style.display = "block";
-    } else {
-      loginElem.style.display = "block";
-      accountElem.style.display = "none";
+    constructor() {
+      super();
+      this.loginElement = this.querySelector("#login");
+      this.accountElement = this.querySelector("#account");
+
+      isLoggedIn.subscribe((user) => {
+        if (!this.accountElement || !this.loginElement) return;
+        if (user) {
+          this.loginElement.style.display = "none";
+          this.accountElement.style.display = "block";
+        } else {
+          this.loginElement.style.display = "block";
+          this.accountElement.style.display = "none";
+        }
+      });
     }
-  });
+  }
+
+  customElements.define("account-nav", UserSession);
 </script>
-
-<div id="login">
-  <NavLink href="/account/login">
-    <span class="icon-cog" aria-hidden="true"></span>
-    <span class="text"> Login</span>
-  </NavLink>
-</div>
-<div id="account">
-  <NavLink href="/account">
-    <span class="icon-cog" aria-hidden="true"></span>
-    <span class="text"> Account</span>
-  </NavLink>
-</div>
-

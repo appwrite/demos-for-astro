@@ -3,18 +3,27 @@ import SiteLayout from "../layouts/SiteLayout.astro";
 ---
 
 <SiteLayout>
-  <h1 class="heading-level-1">🧑‍🚀 Hello, Astronaut!</h1>
-  <p>
-    This example is the <a
-      href="https://github.com/appwrite/demos-for-astro"
-      target="_blank"
-      rel="noopener noreferrer"
-      style="text-decoration: underline">repo</a
-    > for the guide found on <a
-      href="https://docs.astro.build/en/guides/baas/appwriteio/"
-      target="_blank"
-      rel="noopener noreferrer"
-      style="text-decoration: underline">Astro's Doc Site</a
-    > for using Appwrite.io as a Backend as a Service.
-  </p>
+  <section class="u-flex u-flex-vertical u-gap-16">
+    <h1 class="heading-level-1">🧑‍🚀 Hello, Astronaut!</h1>
+    <p>
+      This example is the <a
+        href="https://github.com/appwrite/demos-for-astro"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="text-decoration: underline">repo</a
+      > for the guide found on <a
+        href="https://docs.astro.build/en/guides/backend/appwriteio/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="text-decoration: underline">Astro's Doc Site</a
+      > for using Appwrite as a Backend as a Service.
+    </p>
+    <a class="button button--primary" href="/posts">View Posts 🚀</a>
+  </section>
 </SiteLayout>
+
+<style>
+  p {
+    max-width: 60ch;
+  }
+</style>

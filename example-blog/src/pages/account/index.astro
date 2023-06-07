@@ -3,27 +3,39 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 ---
 
 <script>
-  import { user$, logout } from "../../lib/appwrite";
+  import { user$, logout, isAuthor } from "../../lib/appwrite";
 
-  const loginElem: HTMLElement | null =
+  const loginElement: HTMLElement | null =
     document.querySelector("#accountLoginLink");
-  const userElem: HTMLElement | null = document.querySelector("#accountUser");
+  const userElement: HTMLElement | null =
+    document.querySelector("#accountUser");
 
   user$.subscribe((user) => {
-    if (!loginElem || !userElem) return;
-    if (user) {
-      loginElem.style.display = "none";
-      userElem.style.display = "block";
+    if (!loginElement || !userElement) return;
+    if (!user) {
+      loginElement.style.display = "flex";
+      userElement.style.display = "none";
+      return;
+    }
 
-      const accountUserDetailElem: HTMLElement | null =
-        document.querySelector("#accountUserDetail");
-      if (accountUserDetailElem)
-        accountUserDetailElem.innerHTML = `Email: ${user.email} Admin: ${
-          user.prefs.admin || false
-        }`;
-    } else {
-      loginElem.style.display = "block";
-      userElem.style.display = "none";
+    loginElement.style.display = "none";
+    userElement.style.display = "flex";
+
+    const userDetailsElement: HTMLElement | null =
+      userElement.querySelector("#accountUserDetail");
+
+    if (userDetailsElement) {
+      userDetailsElement.innerHTML = `Email: ${user.email}`;
+    }
+  });
+
+  isAuthor.subscribe((isAuthor) => {
+    if (!userElement || !isAuthor) return;
+    const authorDetailsElement: HTMLElement | null = userElement.querySelector(
+      "#accountAuthorDetail"
+    );
+    if (authorDetailsElement) {
+      authorDetailsElement.innerHTML = `Author: ${isAuthor}`;
     }
   });
 
@@ -35,16 +47,25 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 </script>
 
 <SiteLayout>
-  <h1 class="heading-level-1">Account</h1>
+  <section class="u-flex u-flex-vertical u-gap-8">
+    <h1 class="heading-level-1">Account</h1>
 
-  <section id="accountLoginLink">
-    <a href="/account/login">Login</a>
-  </section>
+    <section id="accountLoginLink">
+      <a href="/account/login">Login</a>
+    </section>
 
-  <section id="accountUser">
-    <div class="u-flex u-flex-vertical u-gap-4">
+    <section id="accountUser">
       <section id="accountUserDetail"></section>
+      <section id="accountAuthorDetail"></section>
       <button id="account-logout" class="button">Logout</button>
-    </div>
+    </section>
   </section>
 </SiteLayout>
+
+<style>
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+</style>

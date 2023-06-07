@@ -35,17 +35,26 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 </script>
 
 <SiteLayout>
-  <section class="u-flex u-flex-vertical u-gap-4">
-    <h1 class="headline-level-1">Login</h1>
-    <form class="u-flex u-flex-vertical u-gap-4">
+  <section class="u-flex u-flex-vertical u-gap-16">
+    <h1 class="heading-level-1">Login</h1>
+    <form class="u-flex u-flex-vertical u-gap-8">
       <label for="email"> Email</label>
       <input id="email" type="email" required />
 
       <label for="password"> Password</label>
       <input id="password" type="password" required />
 
-      <button type="submit" class="button">Log In</button>
+      <button type="submit" class="button u-margin-block-start-16"
+        >Log In</button
+      >
     </form>
     <a href="/account/signup" style="text-decoration: underline">Sign Up</a>
   </section>
 </SiteLayout>
+
+<style>
+  section {
+    width: 100%;
+    max-width: 30rem;
+  }
+</style>

@@ -12,7 +12,20 @@ import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
     <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
   </head>
   <body>
-    <div class="grid-with-side">
+    <script is:inline>
+      const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
+      const theme =
+        localStorage.getItem("theme") ??
+        (defaultTheme.matches ? "dark" : "light");
+      if (theme === "dark") {
+        document.body.classList.remove("theme-light");
+        document.body.classList.add("theme-dark");
+      } else {
+        document.body.classList.remove("theme-dark");
+        document.body.classList.add("theme-light");
+      }
+    </script>
+    <div class="grid-with-side" style="min-height: 100vh;">
       <Header />
       <SideNav />
       <main class="main-content">

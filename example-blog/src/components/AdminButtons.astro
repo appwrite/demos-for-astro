@@ -1,5 +1,4 @@
 ---
-import type { BlogPost } from "../lib/appwrite";
 import ModalDelete from "./ModalDelete.astro";
 
 // Notice: You don't need to send the full post string
@@ -14,15 +13,15 @@ const post = JSON.parse(poststring);
 ---
 
 <section class="adminButtons" style="display: none">
-  <div style="display:flex; gap: 0.5rem">
+  <div class="u-flex u-gap-8">
     <ModalDelete poststring={poststring}>
       <span class="icon-trash" aria-hidden="true"></span>
       <span class="text">Delete</span>
     </ModalDelete>
     <a
       class="button is-secondary"
-      href={`/blog/edit?id=${post.$id}`}
-      aria-label="Edit Blog"
+      href={`/posts/edit?id=${post.$id}`}
+      aria-label="Edit Post"
     >
       <span class="icon-pencil" aria-hidden="true"></span>
       <span class="text">Edit</span>
@@ -31,20 +30,17 @@ const post = JSON.parse(poststring);
 </section>
 
 <script>
-  // Check if user has session
-  import { user$ } from "../lib/appwrite";
-
-  // This gets ALL buttons on the screen
-  const adminButtonsElem: NodeListOf<HTMLElement> | null =
-    document.querySelectorAll(".adminButtons");
+  import { isAuthor } from "../lib/appwrite";
 
   // Show Buttons if user is an admin
-  user$.subscribe((user) => {
-    if (!adminButtonsElem) return;
-    if (user && user.prefs.admin) {
-      Array.from(adminButtonsElem).map((b) => (b.style.display = "block"));
+  isAuthor.subscribe((isAuthor) => {
+    const authorButtonsElements: NodeListOf<HTMLElement> | null =
+      document.querySelectorAll(".adminButtons");
+    if (!authorButtonsElements) return;
+    if (isAuthor) {
+      Array.from(authorButtonsElements).map((b) => (b.style.display = "block"));
     } else {
-      Array.from(adminButtonsElem).map((b) => (b.style.display = "none"));
+      Array.from(authorButtonsElements).map((b) => (b.style.display = "none"));
     }
   });
 </script>

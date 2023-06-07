@@ -52,26 +52,26 @@ const post: BlogPost = JSON.parse(poststring);
       if (!this.dataset.poststring) return;
       const post: BlogPost = JSON.parse(this.dataset.poststring);
       //Modal
-      const modalDeleteShowElem: HTMLButtonElement | null =
+      const deleteModalShowElement: HTMLButtonElement | null =
         this.querySelector("#modal-delete-show");
-      const modalDeleteDialogElem: HTMLDialogElement | null =
+      const deleteModalDialogElement: HTMLDialogElement | null =
         this.querySelector("#modal-delete-dialog");
 
-      if (modalDeleteShowElem && modalDeleteDialogElem) {
-        modalDeleteShowElem.addEventListener("click", () => {
-          modalDeleteDialogElem.showModal();
+      if (deleteModalShowElement && deleteModalDialogElement) {
+        deleteModalShowElement.addEventListener("click", () => {
+          deleteModalDialogElement.showModal();
         });
-        modalDeleteDialogElem.addEventListener("close", async () => {
-          if (!modalDeleteDialogElem.returnValue) {
+        deleteModalDialogElement.addEventListener("close", async () => {
+          if (!deleteModalDialogElement.returnValue) {
             return;
           }
           try {
             await appwriteDatabases.deleteDocument(
               import.meta.env.PUBLIC_APPWRITE_DB_ID,
-              import.meta.env.PUBLIC_APPWRITE_BLOG_ID,
-              modalDeleteDialogElem.returnValue
+              import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
+              deleteModalDialogElement.returnValue
             );
-            window.location.replace(`/blog`);
+            window.location.replace(`/posts`);
           } catch (error) {
             const appwriteError = error as AppwriteException;
             alert(appwriteError.message);

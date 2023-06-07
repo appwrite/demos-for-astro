@@ -1,96 +1,39 @@
 ---
 import HeaderAccount from "../components/HeaderAccount.astro";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
 ---
 
 <script>
-  const btnLightElem: HTMLButtonElement | null = document.querySelector(
-    "#theme-toggle-light"
-  );
-  const btnDarkElem: HTMLButtonElement | null =
-    document.querySelector("#theme-toggle-dark");
+  import { atom } from "nanostores";
 
-  function setTheme() {
-    const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
-    const theme =
-      localStorage.getItem("theme") ??
-      (defaultTheme.matches ? "dark" : "light");
-    if (btnLightElem && btnDarkElem) {
-      if (theme === "dark") {
-        document.body.classList.remove("theme-light");
-        document.body.classList.add("theme-dark");
-        btnLightElem.style.display = "none";
-        btnDarkElem.style.display = "block";
-      } else {
-        document.body.classList.remove("theme-dark");
-        document.body.classList.add("theme-light");
-        btnLightElem.style.display = "block";
-        btnDarkElem.style.display = "none";
-      }
+  const isMenuOpen = atom(false);
+
+  isMenuOpen.subscribe((menuIsOpen) => {
+    const mainSideElement: HTMLDivElement | null = document.querySelector(
+      ".main-side.is-not-desktop"
+    );
+    if (mainSideElement) {
+      mainSideElement.style.display = menuIsOpen ? "block" : "none";
     }
-  }
+  });
 
-  function toggleTheme() {
-    const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)");
-    const theme =
-      localStorage.getItem("theme") ??
-      (defaultTheme.matches ? "dark" : "light");
-    if (theme === "dark") {
-      localStorage.setItem("theme", "light");
-      document.body.classList.remove("theme-dark");
-      document.body.classList.add("theme-light");
-
-      if (btnLightElem && btnDarkElem) {
-        btnLightElem.style.display = "block";
-        btnDarkElem.style.display = "none";
-      }
-    } else {
-      localStorage.setItem("theme", "dark");
-      document.body.classList.remove("theme-light");
-      document.body.classList.add("theme-dark");
-      if (btnLightElem && btnDarkElem) {
-        btnLightElem.style.display = "none";
-        btnDarkElem.style.display = "block";
-      }
-    }
-  }
-
-  //Check for theme on load
-  if (btnLightElem && btnDarkElem) {
-    setTheme();
-    btnLightElem?.addEventListener("click", (e) => {
-      toggleTheme();
+  const navigationButton: HTMLButtonElement | null =
+    document.querySelector(".nav-btn");
+  if (navigationButton)
+    navigationButton.addEventListener("click", () => {
+      isMenuOpen.set(!isMenuOpen.get());
     });
-    btnDarkElem?.addEventListener("click", (e) => {
-      toggleTheme();
-    });
-  }
 </script>
 
 <header class="main-header u-padding-inline-end-0">
   <button class="icon-button is-not-desktop nav-btn" aria-label="Open Menu">
     <span aria-hidden="true" class="icon-menu"></span>
   </button>
-  <a class="logo" href="/"> My Blog</a>
+  <a class="logo heading-level-6 u-bold" href="/">Appwrite + Astro = ❤️</a>
   <div class="main-header-end u-margin-inline-end-16">
     <ul class="buttons-list is-with-padding">
       <li class="buttons-list-item u-padding-inline-0">
-        <!-- Light -->
-        <button
-          id="theme-toggle-light"
-          class="button is-only-icon is-text"
-          aria-label="Replace to Dark Mode Theme"
-        >
-          <span class="icon-sun" aria-hidden="true"></span>
-        </button>
-        <!-- Dark -->
-        <button
-          id="theme-toggle-dark"
-          class="button is-only-icon is-text"
-          x-on:click="toggleTheme(); theme = 'light'"
-          aria-label="Replace to Light Mode Theme"
-        >
-          <span class="icon-moon" aria-hidden="true"></span>
-        </button>
+        <ThemeSwitcher />
       </li>
     </ul>
     <HeaderAccount />

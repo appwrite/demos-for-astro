@@ -3,37 +3,38 @@ import SiteLayout from "../../layouts/SiteLayout.astro";
 import { appwriteDatabases, BlogPostList } from "../../lib/appwrite";
 import AdminButtons from "../../components/AdminButtons.astro";
 import AdminCreate from "../../components/AdminCreate.astro";
+import { Query } from "appwrite";
 
-const entries = (await appwriteDatabases.listDocuments(
+const { documents: posts } = (await appwriteDatabases.listDocuments(
   import.meta.env.PUBLIC_APPWRITE_DB_ID,
-  import.meta.env.PUBLIC_APPWRITE_BLOG_ID
+  import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
+  [Query.orderDesc("$createdAt")]
 )) as BlogPostList;
-
-const posts = entries.documents.sort(
-  (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
-);
 ---
 
 <SiteLayout>
-  <section class="container">
-    <section class="u-position-relative">
+  <section class="u-flex u-flex-vertical u-gap-16">
+    <div class="u-flex u-gap-16 u-main-space-between u-cross-center">
+      <h1 class="heading-level-1">Blog</h1>
       <AdminCreate />
-    </section>
-    <h1 class="heading-level-1">Blog</h1>
+    </div>
     <ul class="list">
       {
         posts.map((post) => (
           <li class="list-item u-position-relative">
             <span class="icon-arrow-circle-right" aria-hidden="true" />
 
-            <time datetime={post.date}>
-              {new Date(post.date).toLocaleDateString("en-us", {
+            <time datetime={post.$$createdAt}>
+              {new Date(post.$createdAt).toLocaleDateString("en-us", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
               })}
             </time>
-            <a href={`/blog/${post.slug}/`} style="text-decoration: underline;">
+            <a
+              href={`/posts/${post.slug}/`}
+              style="text-decoration: underline;"
+            >
               {post.title}
             </a>
             <AdminButtons poststring={JSON.stringify(post)} />

@@ -5,13 +5,17 @@ interface Props {
 const { postId } = Astro.props;
 ---
 
-<appwrite-post-comments data-postid={postId} style="display: none;">
+<post-comments data-postid={postId}>
   <div class="u-flex u-flex-vertical u-gap-16">
-    <form class="form u-width-full-line u-flex u-flex-vertical u-gap-16">
+    <hr style="border-bottom: 0.05rem solid hsl(var(--color-border))" />
+    <form
+      class="form u-width-full-line u-flex u-flex-vertical u-gap-16"
+      style="display: none;"
+    >
       <ul class="form-list">
         <li class="form-item">
           <label class="label">Comments</label>
-          <input name="comment" type="text" class="input-text" />
+          <input name="content" type="text" class="input-text" />
         </li>
       </ul>
       <button class="button u-cross-child-end" type="submit">Add Comment</button
@@ -19,68 +23,65 @@ const { postId } = Astro.props;
     </form>
     <ul class="list"></ul>
   </div>
-</appwrite-post-comments>
+</post-comments>
+
 <script>
   import { AppwriteException, ID, Query } from "appwrite";
   import { atom, WritableAtom } from "nanostores";
+  import sanitizeHtml from "sanitize-html";
   import {
     appwriteClient,
     appwriteDatabases,
     BlogComment,
-    BlogCommentList,
     user$,
   } from "../lib/appwrite";
 
-  class AppwritePostComments extends HTMLElement {
-    databaseId = import.meta.env.PUBLIC_APPWRITE_DB_ID;
-    collectionId = import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID;
+  class Comments extends HTMLElement {
     postId: string = "";
     comments$: WritableAtom<BlogComment[]> = atom([]);
 
     constructor() {
       super();
       if (!this.dataset.postid) return;
-
       this.postId = this.dataset.postid;
+
       // Only show comments for users logged in.
       this.showUsers();
     }
 
     async showUsers() {
       user$.subscribe((user) => {
+        // Display the form only for logged-in users
         if (user) {
-          this.style.display = "block";
-        } else {
-          this.style.display = "none";
-          return;
+          this.querySelector("form")?.style.setProperty("display", "flex");
+          this.setupRealtimeComments();
+          this.addCommentInput();
         }
-        //Only users get comments
-        this.addCommentInput();
+
+        // All users get comments
         this.loadComments();
-        this.subComments();
+        this.subscribeComments();
       });
     }
 
     addCommentInput() {
-      const formElem: HTMLFormElement | null = this.querySelector("form");
-      const btnElem: HTMLButtonElement | null = this.querySelector("button");
+      const formElement: HTMLFormElement | null = this.querySelector("form");
+      if (!formElement) return;
 
-      if (!formElem || !btnElem) return;
-
-      formElem.addEventListener("submit", async (e) => {
+      formElement.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const commentInputElem: HTMLInputElement | null =
-          formElem.querySelector('input[name="comment"]');
-        if (commentInputElem) {
-          const formData = new FormData(formElem);
+        const commentInputElement: HTMLInputElement | null =
+          formElement.querySelector('input[name="content"]');
+        if (commentInputElement) {
+          const formData = new FormData(formElement);
           try {
             await appwriteDatabases.createDocument(
-              this.databaseId,
-              this.collectionId,
+              import.meta.env.PUBLIC_APPWRITE_DB_ID,
+              import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID,
               ID.unique(),
               { ...Object.fromEntries(formData), postId: this.postId }
             );
-            commentInputElem.value = "";
+            commentInputElement.value = "";
           } catch (error) {
             const appwriteError = error as AppwriteException;
             alert(appwriteError.message);
@@ -92,8 +93,8 @@ const { postId } = Astro.props;
     async loadComments() {
       try {
         const comments = await appwriteDatabases.listDocuments(
-          this.databaseId,
-          this.collectionId,
+          import.meta.env.PUBLIC_APPWRITE_DB_ID,
+          import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID,
           [Query.equal("postId", this.postId), Query.orderDesc("$createdAt")]
         );
         this.comments$.set(comments.documents as BlogComment[]);
@@ -103,57 +104,69 @@ const { postId } = Astro.props;
       }
     }
 
-    async subComments() {
+    async handleCreateEvent(updatedComment: BlogComment) {
+      // Append new payload to the list
+      this.comments$.set([...[updatedComment], ...this.comments$.get()]);
+    }
+
+    async handleUpdateEvent(updatedComment: BlogComment) {
+      // Find payload item and update
+      const comments = this.comments$.get();
+      this.comments$.set([
+        ...comments.map((c) =>
+          c.$id === updatedComment.$id ? updatedComment : c
+        ),
+      ]);
+    }
+
+    async handleDeleteEvent(updatedComment: BlogComment) {
+      // Find and remove payload item
+      const comments = this.comments$.get();
+      this.comments$.set([
+        ...comments.filter((c) => c.$id !== updatedComment.$id),
+      ]);
+    }
+
+    async subscribeComments() {
       this.comments$.listen((commentEvent) => {
-        const commentsElem: HTMLUListElement | null =
+        const commentsElement: HTMLUListElement | null =
           this.querySelector(".list");
-        if (commentsElem) {
-          commentsElem.replaceChildren();
+        if (commentsElement) {
+          commentsElement.replaceChildren();
           commentEvent.map((c) => {
             const commentItem = `<li class="list-item" data-postid="${c?.$id}">
-          <span class="icon-chat" aria-hidden="true"></span>
-          <span class="text">${c?.comment}</span>
-        </li>`;
-            commentsElem.insertAdjacentHTML("beforeend", commentItem);
+    <span class="icon-chat" aria-hidden="true"></span>
+    <span class="text">${sanitizeHtml(c?.content)}</span>
+  </li>`;
+            commentsElement.insertAdjacentHTML("beforeend", commentItem);
           });
         }
       });
+    }
 
-      const sub = `databases.${this.databaseId}.collections.${this.collectionId}.documents`;
+    async setupRealtimeComments() {
+      const event = `databases.${
+        import.meta.env.PUBLIC_APPWRITE_DB_ID
+      }.collections.${import.meta.env.PUBLIC_APPWRITE_COMMENTS_ID}.documents`;
       try {
-        appwriteClient.subscribe(sub, (response) => {
+        appwriteClient.subscribe(event, (response) => {
           const updatedComment: BlogComment = response.payload as BlogComment;
           if (updatedComment.postId !== this.postId) {
-            console.debug(
-              `postId: ${updatedComment.postId} does not match current post ${this.postId}`
-            );
             return;
           }
 
-          if (response.events.includes(`${sub}.${updatedComment.$id}.create`)) {
-            console.debug(`Adding: ${updatedComment.$id}`);
-            // Append new payload to the list
-            this.comments$.set([...[updatedComment], ...this.comments$.get()]);
-          } else if (
-            response.events.includes(`${sub}.${updatedComment.$id}.update`)
+          if (
+            response.events.includes(`${event}.${updatedComment.$id}.create`)
           ) {
-            console.debug(`Updating: ${updatedComment.$id}`);
-            // Find payload item and update
-            const comments = this.comments$.get();
-            this.comments$.set([
-              ...comments.map((c) =>
-                c.$id === updatedComment.$id ? updatedComment : c
-              ),
-            ]);
+            this.handleCreateEvent(updatedComment);
           } else if (
-            response.events.includes(`${sub}.${updatedComment.$id}.delete`)
+            response.events.includes(`${event}.${updatedComment.$id}.update`)
           ) {
-            console.debug(`Removing: ${updatedComment.$id}`);
-            // Find and remove payload item
-            const comments = this.comments$.get();
-            this.comments$.set([
-              ...comments.filter((c) => c.$id !== updatedComment.$id),
-            ]);
+            this.handleUpdateEvent(updatedComment);
+          } else if (
+            response.events.includes(`${event}.${updatedComment.$id}.delete`)
+          ) {
+            this.handleDeleteEvent(updatedComment);
           }
         });
       } catch (error) {
@@ -162,5 +175,5 @@ const { postId } = Astro.props;
       }
     }
   }
-  customElements.define("appwrite-post-comments", AppwritePostComments);
+  customElements.define("post-comments", Comments);
 </script>

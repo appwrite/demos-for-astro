@@ -1,32 +1,28 @@
 {
-    "projectId": "6062f9c2c09ce",
-    "projectName": "Appwrite Demos",
+    "projectId": "demos_for_astro",
+    "projectName": "Demos For Astro",
+    "databases": [
+        {
+            "$id": "blog",
+            "name": "Blog",
+            "$createdAt": "2023-05-24T10:32:35.676+00:00",
+            "$updatedAt": "2023-05-24T10:32:35.676+00:00"
+        }
+    ],
     "collections": [
         {
-            "$id": "63ecf94aad01784f9c65",
-            "$createdAt": "2023-02-15T15:24:58.708+00:00",
-            "$updatedAt": "2023-02-19T22:17:01.591+00:00",
+            "$id": "posts",
             "$permissions": [
                 "read(\"any\")",
-                "create(\"team:63f29f648b9a34a914d1\")",
-                "read(\"team:63f29f648b9a34a914d1\")",
-                "update(\"team:63f29f648b9a34a914d1\")",
-                "delete(\"team:63f29f648b9a34a914d1\")"
+                "create(\"team:authors\")",
+                "update(\"team:authors\")",
+                "delete(\"team:authors\")"
             ],
-            "databaseId": "default",
-            "name": "Astro Example Blog",
+            "databaseId": "blog",
+            "name": "Posts",
             "enabled": true,
-            "documentSecurity": false,
+            "documentSecurity": true,
             "attributes": [
-                {
-                    "key": "date",
-                    "type": "datetime",
-                    "status": "available",
-                    "required": true,
-                    "array": false,
-                    "format": "",
-                    "default": null
-                },
                 {
                     "key": "slug",
                     "type": "string",
@@ -62,6 +58,15 @@
                     "array": false,
                     "size": 255,
                     "default": null
+                },
+                {
+                    "key": "imageUrl",
+                    "type": "string",
+                    "status": "available",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
                 }
             ],
             "indexes": [
@@ -79,15 +84,13 @@
             ]
         },
         {
-            "$id": "63f6538dbe55918d0685",
-            "$createdAt": "2023-02-22T17:40:29.779+00:00",
-            "$updatedAt": "2023-02-22T18:46:38.358+00:00",
+            "$id": "comments",
             "$permissions": [
-                "create(\"users\")",
-                "read(\"users\")"
+                "read(\"any\")",
+                "create(\"users\")"
             ],
-            "databaseId": "default",
-            "name": "Astro Example Comments",
+            "databaseId": "blog",
+            "name": "Comments",
             "enabled": true,
             "documentSecurity": true,
             "attributes": [
@@ -101,7 +104,7 @@
                     "default": null
                 },
                 {
-                    "key": "comment",
+                    "key": "content",
                     "type": "string",
                     "status": "available",
                     "required": true,
@@ -123,6 +126,33 @@
                     ]
                 }
             ]
+        }
+    ],
+    "teams": [
+        {
+            "$id": "authors",
+            "name": "authors"
+        }
+    ],
+    "buckets": [
+        {
+            "$id": "post_images",
+            "$createdAt": "2023-05-24T14:03:26.874+00:00",
+            "$updatedAt": "2023-05-24T14:04:32.937+00:00",
+            "$permissions": [
+                "read(\"any\")",
+                "create(\"team:authors\")",
+                "update(\"team:authors\")",
+                "delete(\"team:authors\")"
+            ],
+            "fileSecurity": false,
+            "name": "post_images",
+            "enabled": true,
+            "maximumFileSize": 3000000000,
+            "allowedFileExtensions": [],
+            "compression": "none",
+            "encryption": true,
+            "antivirus": true
         }
     ]
 }

@@ -1,47 +1,88 @@
 ---
 import NavLink from "./NavLink.astro";
-import { SITE_TITLE } from "../consts";
 import Account from "./Account.astro";
 ---
 
-<div class="side-nav">
-  <div class="side-nav-main">
-    <section class="drop-section">
-      <ul class="drop-list">
-        <li class="drop-list-item">
-          <NavLink href="/blog">
-            <span class="icon-user-group" aria-hidden="true"></span>
-            <span class="text">Blog</span>
-          </NavLink>
-        </li>
-        <li class="drop-list-item">
-          <Account />
-        </li>
-      </ul>
-    </section>
+<div class="main-side is-only-desktop">
+  <div class="side-nav">
+    <div class="side-nav-main">
+      <section class="drop-section">
+        <ul class="drop-list">
+          <li class="drop-list-item">
+            <NavLink href="/posts">
+              <span class="icon-document-text" aria-hidden="true"></span>
+              <span class="text">Blog</span>
+            </NavLink>
+          </li>
+          <li class="drop-list-item">
+            <Account />
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class="side-nav-bottom">
+      <section class="drop-section">
+        <ul class="drop-list">
+          <li class="drop-list-item">
+            <NavLink
+              href="https://docs.astro.build/en/guides/backend/appwriteio/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="icon-book-open" aria-hidden="true"></span>
+              <span class="text">Astro Docs</span>
+            </NavLink>
+            <NavLink
+              href="https://github.com/appwrite/demos-for-astro"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="icon-github" aria-hidden="true"></span>
+              <span class="text">GitHub Repo</span>
+            </NavLink>
+          </li>
+        </ul>
+      </section>
+    </div>
   </div>
-  <div class="side-nav-bottom">
-    <section class="drop-section">
-      <ul class="drop-list">
-        <li class="drop-list-item">
-          <NavLink
-            href="https://docs.astro.build/en/guides/baas/appwriteio/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span class="icon-document" aria-hidden="true"></span>
-            <span class="text">Astro Doc</span>
-          </NavLink>
-          <NavLink
-            href="https://github.com/appwrite/demos-for-astro"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span class="icon-github" aria-hidden="true"></span>
-            <span class="text">GitHub Repo</span>
-          </NavLink>
-        </li>
-      </ul>
-    </section>
+</div>
+
+<div class="main-side is-not-desktop">
+  <div class="side-nav">
+    <div class="side-nav-main">
+      <section class="drop-section">
+        <ul class="drop-list">
+          <li class="drop-list-item">
+            <NavLink href="/posts">
+              <span class="icon-document-text" aria-hidden="true"></span>
+              <span class="text">Blog</span>
+            </NavLink>
+          </li>
+          <li class="drop-list-item">
+            <Account />
+          </li>
+          <li class="drop-list-item">
+            <NavLink
+              href="https://docs.astro.build/en/guides/backend/appwriteio/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="icon-book-open" aria-hidden="true"></span>
+              <span class="text">Astro Docs</span>
+            </NavLink>
+          </li>
+          <li class="drop-list-item">
+            <NavLink
+              href="https://github.com/appwrite/demos-for-astro"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="icon-github" aria-hidden="true"></span>
+              <span class="text">GitHub Repo</span>
+            </NavLink>
+          </li>
+        </ul>
+      </section>
+    </div>
   </div>
 </div>

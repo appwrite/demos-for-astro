@@ -1,0 +1,64 @@
+---
+import UploadFile from "../../components/UploadFile.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+---
+
+<SiteLayout>
+  <form
+    class="form u-width-full-line u-max-width-500 u-flex u-flex-vertical u-gap-16"
+  >
+    <ul class="form-list">
+      <li class="form-item">
+        <label class="label">Slug</label>
+        <input name="slug" type="text" class="input-text" required />
+      </li>
+      <li class="form-item">
+        <label class="label">Title</label>
+        <input name="title" type="text" class="input-text" required />
+      </li>
+      <UploadFile />
+      <li class="form-item">
+        <label class="label">Description</label>
+        <input name="description" type="text" class="input-text" />
+      </li>
+
+      <li class="form-item">
+        <label class="label">Content</label>
+        <textarea name="content" class="input-text"></textarea>
+      </li>
+    </ul>
+    <button type="submit" class="button">Create</button>
+  </form>
+</SiteLayout>
+
+<script>
+  import { ID } from "appwrite";
+  import type { AppwriteException } from "appwrite";
+  import { appwriteDatabases } from "../../lib/appwrite";
+
+  const form: HTMLFormElement | null = document.querySelector("form");
+
+  if (!form) {
+    alert("Missing Form");
+  } else {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      try {
+        const post = await appwriteDatabases.createDocument(
+          import.meta.env.PUBLIC_APPWRITE_DB_ID,
+          import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
+          ID.unique(),
+          {
+            ...Object.fromEntries(formData),
+            imageurl: undefined,
+          }
+        );
+        window.location.replace(`/posts`);
+      } catch (error) {
+        const appwriteError = error as AppwriteException;
+        alert(appwriteError.message);
+      }
+    });
+  }
+</script>

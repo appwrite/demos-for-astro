@@ -1,0 +1,97 @@
+---
+import UploadFile from "../../components/UploadFile.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+---
+
+<script>
+  import type { AppwriteException } from "appwrite";
+  import { appwriteDatabases, BlogPost } from "../../lib/appwrite";
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const id = urlParams.get("id");
+
+  if (!id) {
+    alert("No ID selected.");
+  } else {
+    const post = (await appwriteDatabases.getDocument(
+      import.meta.env.PUBLIC_APPWRITE_DB_ID,
+      import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
+      id
+    )) as BlogPost;
+
+    if (!post) {
+      alert("ID not found for this document.");
+    } else {
+      // Update data elements for upload
+      const uploadFileElement: HTMLElement | null = document.querySelector(
+        "appwrite-upload-file"
+      );
+      post.$id && uploadFileElement?.setAttribute("data-postid", post.$id);
+      post.imageurl &&
+        uploadFileElement?.setAttribute("data-imageurl", post.imageurl);
+
+      const form: HTMLFormElement | null = document.querySelector("form");
+      if (!form) {
+        alert("Missing Form");
+      } else {
+        // Set form value from post
+        const titleInputElement: HTMLInputElement | null =
+          form.querySelector('[name="title"]');
+        const descriptionInputElement: HTMLInputElement | null =
+          form.querySelector('[name="description"]');
+        const contentInputElement: HTMLInputElement | null =
+          form.querySelector('[name="content"]');
+        if (
+          titleInputElement &&
+          descriptionInputElement &&
+          contentInputElement
+        ) {
+          titleInputElement.value = post?.title || "";
+          descriptionInputElement.value = post?.description || "";
+          contentInputElement.value = post?.content || "";
+        }
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData(form);
+          try {
+            await appwriteDatabases.updateDocument(
+              import.meta.env.PUBLIC_APPWRITE_DB_ID,
+              import.meta.env.PUBLIC_APPWRITE_POSTS_ID,
+              id,
+              Object.fromEntries(formData)
+            );
+            window.location.replace(`/posts/${post.slug}`);
+          } catch (error) {
+            const appwriteError = error as AppwriteException;
+            alert(appwriteError.message);
+          }
+        });
+      }
+    }
+  }
+</script>
+
+<SiteLayout>
+  <form
+    class="form u-width-full-line u-max-width-500 u-flex u-flex-vertical u-gap-16"
+  >
+    <ul class="form-list">
+      <li class="form-item">
+        <label class="label">Title</label>
+        <input name="title" type="text" class="input-text" />
+      </li>
+      <UploadFile />
+      <li class="form-item">
+        <label class="label">Description</label>
+        <input name="description" type="text" class="input-text" />
+      </li>
+      <li class="form-item">
+        <label class="label">Content</label>
+        <textarea name="content" class="input-text"></textarea>
+      </li>
+    </ul>
+    <button type="submit" class="button">Update</button>
+  </form>
+</SiteLayout>
