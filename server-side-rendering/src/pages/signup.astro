@@ -1,13 +1,42 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import Layout from "../layouts/Layout.astro";
+import { SESSION_COOKIE, createAppwriteClient } from "../server/appwrite";
+
+const { user } = Astro.locals;
+if (user) {
+  return Astro.redirect("/account");
+}
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+
+  const email = data.get("email") as string;
+  const password = data.get("password") as string;
+  const name = data.get("name") as string;
+
+  const { account } = createAppwriteClient(Astro.request);
+
+  await account.create(email, password, name);
+  const session = await account.createEmailPasswordSession(email, password);
+
+  Astro.cookies.set(SESSION_COOKIE, session.secret, {
+    path: "/",
+    maxAge: Number(session.expire),
+    sameSite: "strict",
+    secure: true,
+    httpOnly: true,
+  });
+
+  return Astro.redirect("/account");
+}
 ---
 
 <script>
-  import { signInWithGithub } from "../../oauth";
+  import { signInWithGithub } from "../oauth";
 
   document
     .getElementById("signInWithGithubButton")
-    ?.addEventListener("onclick", signInWithGithub);
+    ?.addEventListener("click", () => signInWithGithub());
 </script>
 
 <Layout title="Sign up | Server side rendering with Appwrite and Astro">

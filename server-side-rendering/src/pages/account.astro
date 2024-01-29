@@ -1,11 +1,28 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import Layout from "../layouts/Layout.astro";
+import { SESSION_COOKIE, createAppwriteClient } from "../server/appwrite";
+
+const { user } = Astro.locals;
+if (!user) {
+  return Astro.redirect("/signin");
+}
+
+if (Astro.request.method === "POST") {
+  const { account } = createAppwriteClient(Astro.request);
+
+  await account.deleteSession("current");
+  Astro.cookies.delete(SESSION_COOKIE);
+
+  return Astro.redirect("/signin");
+}
 
 function getInitials(name: string) {
   const [first, last] = name.split(" ");
   if (last) return `${first[0]}${last[0]}`;
   return `${first[0]}`;
 }
+
+const userInitials = getInitials(user.name);
 ---
 
 <Layout title="Your account | Server side rendering with Appwrite and Astro">
@@ -14,7 +31,7 @@ function getInitials(name: string) {
     <div class="u-margin-block-start-24">
       <section class="card">
         <div class="user-profile">
-          <span class="avatar">{getInitials(user.name)}</span>
+          <span class="avatar">{userInitials}</span>
           <span class="user-profile-info">
             <span class="name">{user.email}</span>
             <div class="interactive-text-output u-padding-inline-0">

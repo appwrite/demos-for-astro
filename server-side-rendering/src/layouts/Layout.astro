@@ -14,7 +14,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="theme-dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -22,7 +22,7 @@ const { title } = Astro.props;
     <link rel="icon" href={Icon.src} />
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body>
+  <body class="theme-dark">
     <main class="grid-1-1 is-full-page" id="main">
       <section
         class="u-flex u-flex-vertical"
@@ -58,7 +58,7 @@ const { title } = Astro.props;
   </body>
 </html>
 
-<style is:global>
+<style>
   #main > section:first-child {
     padding-block-start: 2.25rem;
     padding-block-end: 2rem;
@@ -116,7 +116,9 @@ const { title } = Astro.props;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+</style>
 
+<style is:global>
   .with-separators {
     display: flex;
     align-items: center;

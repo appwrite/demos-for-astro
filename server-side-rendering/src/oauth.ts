@@ -1,11 +1,11 @@
 export async function signInWithGithub() {
   const url = new URL(
-    `${process.env.PUBLIC_APPWRITE_ENDPOINT}/account/sessions/oauth2/github`
+    `${import.meta.env.PUBLIC_APPWRITE_ENDPOINT}/account/sessions/oauth2/github`
   );
 
   const origin = window.location.origin;
 
-  url.searchParams.set("project", process.env.PUBLIC_APPWRITE_PROJECT_ID!);
+  url.searchParams.set("project", import.meta.env.PUBLIC_APPWRITE_PROJECT_ID!);
   url.searchParams.set("success", `${origin}/auth`);
   url.searchParams.set("failure", `${origin}/signin`);
 
