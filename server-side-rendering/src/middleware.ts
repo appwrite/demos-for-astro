@@ -1,12 +1,11 @@
 import { defineMiddleware } from "astro:middleware";
-import { createAppwriteClient } from "./server/appwrite";
+import { createSessionClient } from "./server/appwrite";
 
 export const onRequest = defineMiddleware(async ({ request, locals }, next) => {
-  const { account } = createAppwriteClient(request);
+  const { account } = createSessionClient(request);
 
   try {
-    const user = await account.get();
-    locals.user = user && user.$id ? user : undefined;
+    locals.user = await account.get();
   } catch {}
 
   return next();

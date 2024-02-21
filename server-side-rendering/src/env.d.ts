@@ -5,8 +5,7 @@ declare namespace App {
     user?:
       | import("luke-node-appwrite-ssr").Models.User<
           import("luke-node-appwrite-ssr").Models.Preferences<{}>
-        >
-      | null;
+        >;
   }
 }
 

@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { SESSION_COOKIE, createAppwriteClient } from "../server/appwrite";
+import { SESSION_COOKIE, createAdminClient } from "../server/appwrite";
 
 const { user } = Astro.locals;
 if (user) {
@@ -13,8 +13,7 @@ if (Astro.request.method === "POST") {
   const email = data.get("email") as string;
   const password = data.get("password") as string;
 
-  const { account } = createAppwriteClient(Astro.request);
-
+  const { account } = createAdminClient();
   const session = await account.createEmailPasswordSession(email, password);
 
   Astro.cookies.set(SESSION_COOKIE, session.secret, {
@@ -28,14 +27,6 @@ if (Astro.request.method === "POST") {
   return Astro.redirect("/account");
 }
 ---
-
-<script>
-  import { signInWithGithub } from "../oauth";
-
-  document
-    .getElementById("signInWithGithubButton")
-    ?.addEventListener("click", () => signInWithGithub());
-</script>
 
 <Layout title="Sign in | Server side rendering with Appwrite and Astro">
   <div class="u-max-width-500 u-width-full-line">
@@ -91,14 +82,12 @@ if (Astro.request.method === "POST") {
           </li>
           <span class="with-separators eyebrow-heading-3">or</span>
           <li class="form-item">
-            <button
-              class="button is-github is-full-width"
-              id="signInWithGithubButton"
-              type="button"
-            >
-              <span class="icon-github" aria-hidden="true"></span>
-              <span class="text">Sign in with GitHub</span></button
-            >
+            <form method="POST" action="/oauth">
+              <button class="button is-github is-full-width" type="submit">
+                <span class="icon-github" aria-hidden="true"></span>
+                <span class="text">Sign in with GitHub</span></button
+              >
+            </form>
           </li>
         </ul>
       </form>
