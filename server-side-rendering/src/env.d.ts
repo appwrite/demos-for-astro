@@ -3,8 +3,8 @@
 declare namespace App {
   interface Locals {
     user?:
-      | import("luke-node-appwrite-ssr").Models.User<
-          import("luke-node-appwrite-ssr").Models.Preferences<{}>
+      | import("node-appwrite").Models.User<
+          import("node-appwrite").Models.Preferences<{}>
         >;
   }
 }
