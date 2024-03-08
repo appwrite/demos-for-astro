@@ -1,0 +1,21 @@
+{
+  "name": "server-side-rendering",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@appwrite.io/pink": "^0.3.0",
+    "@appwrite.io/pink-icons": "^0.3.0",
+    "@astrojs/check": "^0.4.1",
+    "@astrojs/node": "^8.1.0",
+    "astro": "^4.2.6",
+    "node-appwrite": "^12.0.0",
+    "typescript": "^5.3.3"
+  }
+}

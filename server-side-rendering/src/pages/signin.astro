@@ -1,0 +1,104 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SESSION_COOKIE, createAdminClient } from "../server/appwrite";
+
+const { user } = Astro.locals;
+if (user) {
+  return Astro.redirect("/account");
+}
+
+if (Astro.request.method === "POST") {
+  const data = await Astro.request.formData();
+
+  const email = data.get("email") as string;
+  const password = data.get("password") as string;
+
+  const { account } = createAdminClient();
+  const session = await account.createEmailPasswordSession(email, password);
+
+  Astro.cookies.set(SESSION_COOKIE, session.secret, {
+    path: "/",
+    maxAge: Number(session.expire),
+    sameSite: "strict",
+    secure: true,
+    httpOnly: true,
+  });
+
+  return Astro.redirect("/account");
+}
+---
+
+<Layout title="Sign in | Server side rendering with Appwrite and Astro">
+  <div class="u-max-width-500 u-width-full-line">
+    <h1 class="heading-level-2 u-margin-block-start-auto">Demo sign in</h1>
+    <div class="u-margin-block-start-24">
+      <form class="form common-section" method="POST">
+        <ul class="form-list" style="--form-list-gap: 1.5rem;">
+          <li class="form-item">
+            <p>
+              This is a demo project for <a href="https://appwrite.io"
+                >Appwrite</a
+              > server side rendering. View the source code on the
+              <a
+                class="link"
+                href="https://github.com/appwrite/demos-for-svelte"
+                >GitHub repository</a
+              >.
+            </p>
+          </li>
+          <li class="form-item">
+            <label class="label is-required" for="email">Email</label>
+            <div class="input-text-wrapper">
+              <input
+                id="email"
+                placeholder="Email"
+                type="email"
+                class="input-text"
+                autocomplete="off"
+              />
+            </div>
+          </li>
+          <li class="form-item">
+            <label class="label is-required" for="password">Password</label>
+            <div class="input-text-wrapper" style="--amount-of-buttons: 1">
+              <input
+                id="password"
+                placeholder="Password"
+                minlength="8"
+                type="password"
+                class="input-text"
+                autocomplete="off"
+              />
+              <button
+                type="button"
+                class="show-password-button"
+                aria-label="show password"
+                ><span aria-hidden="true" class="icon-eye"></span></button
+              >
+            </div>
+          </li>
+          <li class="form-item">
+            <button class="button is-full-width" type="submit"> Sign in</button>
+          </li>
+          <span class="with-separators eyebrow-heading-3">or</span>
+          <li class="form-item">
+            <form method="POST" action="/oauth">
+              <button class="button is-github is-full-width" type="submit">
+                <span class="icon-github" aria-hidden="true"></span>
+                <span class="text">Sign in with GitHub</span></button
+              >
+            </form>
+          </li>
+        </ul>
+      </form>
+    </div>
+    <ul class="inline-links is-center is-with-sep u-margin-block-start-32">
+      <li class="inline-links-item">
+        <span class="text"
+          >Don't have an account? <a class="link" href="/signup">Sign up</a
+          ></span
+        >
+      </li>
+    </ul>
+  </div>
+</Layout>
