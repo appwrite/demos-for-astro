@@ -21,7 +21,7 @@ if (Astro.request.method === "POST") {
 
   Astro.cookies.set(SESSION_COOKIE, session.secret, {
     path: "/",
-    maxAge: Number(session.expire),
+    expires: new Date(session.expire),
     sameSite: "strict",
     secure: true,
     httpOnly: true,
