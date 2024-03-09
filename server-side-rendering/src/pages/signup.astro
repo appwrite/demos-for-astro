@@ -1,4 +1,5 @@
 ---
+import { ID } from "node-appwrite";
 import Layout from "../layouts/Layout.astro";
 import { SESSION_COOKIE, createAdminClient } from "../server/appwrite";
 
@@ -15,7 +16,7 @@ if (Astro.request.method === "POST") {
   const name = data.get("name") as string;
 
   const { account } = createAdminClient();
-  await account.create(email, password, name);
+  await account.create(ID.unique(), email, password, name);
   const session = await account.createEmailPasswordSession(email, password);
 
   Astro.cookies.set(SESSION_COOKIE, session.secret, {
