@@ -16,6 +16,7 @@ if (Astro.request.method === "POST") {
   const name = data.get("name") as string;
 
   const { account } = createAdminClient();
+
   await account.create(ID.unique(), email, password, name);
   const session = await account.createEmailPasswordSession(email, password);
 
@@ -99,15 +100,14 @@ if (Astro.request.method === "POST") {
             <button class="button is-full-width" type="submit"> Sign up</button>
           </li>
           <span class="with-separators eyebrow-heading-3">or</span>
-          <li class="form-item">
-            <form method="POST" action="/oauth">
-              <button class="button is-github is-full-width" type="submit">
-                <span class="icon-github" aria-hidden="true"></span>
-                <span class="text">Sign up with GitHub</span></button
-              >
-            </form>
-          </li>
+          <li class="form-item"></li>
         </ul>
+      </form>
+      <form method="POST" action="/oauth">
+        <button class="button is-github is-full-width" type="submit">
+          <span class="icon-github" aria-hidden="true"></span>
+          <span class="text">Sign up with GitHub</span></button
+        >
       </form>
     </div>
     <ul class="inline-links is-center is-with-sep u-margin-block-start-32">

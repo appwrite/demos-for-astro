@@ -18,7 +18,7 @@ if (Astro.request.method === "POST") {
 
   Astro.cookies.set(SESSION_COOKIE, session.secret, {
     path: "/",
-    maxAge: Number(session.expire),
+    expires: new Date(session.expire),
     sameSite: "strict",
     secure: true,
     httpOnly: true,
@@ -51,6 +51,7 @@ if (Astro.request.method === "POST") {
             <div class="input-text-wrapper">
               <input
                 id="email"
+                name="email"
                 placeholder="Email"
                 type="email"
                 class="input-text"
@@ -63,6 +64,7 @@ if (Astro.request.method === "POST") {
             <div class="input-text-wrapper" style="--amount-of-buttons: 1">
               <input
                 id="password"
+                name="password"
                 placeholder="Password"
                 minlength="8"
                 type="password"
@@ -81,15 +83,14 @@ if (Astro.request.method === "POST") {
             <button class="button is-full-width" type="submit"> Sign in</button>
           </li>
           <span class="with-separators eyebrow-heading-3">or</span>
-          <li class="form-item">
-            <form method="POST" action="/oauth">
-              <button class="button is-github is-full-width" type="submit">
-                <span class="icon-github" aria-hidden="true"></span>
-                <span class="text">Sign in with GitHub</span></button
-              >
-            </form>
-          </li>
+          <li class="form-item"></li>
         </ul>
+      </form>
+      <form method="POST" action="/oauth">
+        <button class="button is-github is-full-width" type="submit">
+          <span class="icon-github" aria-hidden="true"></span>
+          <span class="text">Sign in with GitHub</span></button
+        >
       </form>
     </div>
     <ul class="inline-links is-center is-with-sep u-margin-block-start-32">
