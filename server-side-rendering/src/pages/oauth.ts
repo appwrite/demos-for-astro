@@ -6,8 +6,8 @@ export const POST: APIRoute = async ({ redirect, url }) => {
 
   const redirectUrl = await account.createOAuth2Token(
     "github",
-    `${url.protocol}//${url.hostname}/oauth`,
-    `${url.protocol}//${url.hostname}/sigin`
+    `${url.origin}/oauth`,
+    `${url.origin}/sigin`
   );
 
   return redirect(redirectUrl);
@@ -17,8 +17,16 @@ export const GET: APIRoute = async ({ cookies, redirect, url }) => {
   const userId = url.searchParams.get("userId");
   const secret = url.searchParams.get("secret");
 
+  if (!userId || !secret) {
+    throw new Error("OAuth2 did not provide userId or secret");
+  }
+
   const { account } = createAdminClient();
+
   const session = await account.createSession(userId, secret);
+  if (!session || !session.secret) {
+    throw new Error("Failed to create session from token");
+  }
 
   cookies.set(SESSION_COOKIE, session.secret, {
     sameSite: "strict",

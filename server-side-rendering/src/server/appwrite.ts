@@ -5,9 +5,8 @@ export const SESSION_COOKIE = "my-custom-session";
 export function createAdminClient() {
   const client = new Client()
     .setEndpoint(import.meta.env.PUBLIC_APPWRITE_ENDPOINT)
-    .setProject(import.meta.env.PUBLIC_APPWRITE_PROJECT_ID);
-
-  client.setKey(import.meta.env.APPWRITE_KEY);
+    .setProject(import.meta.env.PUBLIC_APPWRITE_PROJECT_ID)
+    .setKey(import.meta.env.APPWRITE_KEY);
 
   return {
     get account() {
@@ -23,9 +22,11 @@ export function createSessionClient(request: Request) {
 
   const cookies = parseCookies(request.headers.get("cookie") ?? "");
   const session = cookies.get(SESSION_COOKIE);
-  if (session) {
-    client.setSession(session);
+  if (!session) {
+    throw new Error("No session");
   }
+
+  client.setSession(session);
 
   return {
     get account() {
