@@ -9,7 +9,7 @@ import {
   Teams,
   Query,
 } from "appwrite";
-import { atom, WritableAtom } from "nanostores";
+import { atom, type WritableAtom } from "nanostores";
 
 /** Setup */
 export const appwriteClient = new Client()
