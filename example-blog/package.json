@@ -10,14 +10,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@appwrite.io/pink": "^0.0.6",
+    "@appwrite.io/pink": "^0.26.0",
     "@astrojs/mdx": "^8.1.2",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/vercel": "^11.0.18",
     "appwrite": "^11.0.0",
     "astro": "^7.4.5",
-    "nanostores": "^0.8.1",
+    "nanostores": "^0.11.0",
     "sanitize-html": "^2.10.0"
   },
   "devDependencies": {
