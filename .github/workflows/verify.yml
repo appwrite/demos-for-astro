@@ -10,4 +10,4 @@ permissions:
 
 jobs:
   verify:
-    uses: appwrite/renovate-config/.github/workflows/verify.yml@3afeb943b6d52145c7b5ebc6e74833bdf1ade094 # main
+    uses: appwrite/renovate-config/.github/workflows/verify.yml@d8c0f5ab2e04e46e80f69ef9bd487f3d27bb69be # main
